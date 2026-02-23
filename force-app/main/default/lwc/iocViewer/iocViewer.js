@@ -25,7 +25,9 @@ const COLUMNS = [
     { label: 'Type',        fieldName: 'IOC_Type__c',  type: 'text'    },
     { label: 'Value',       fieldName: 'Value__c',     type: 'text'    },
     { label: 'Active',      fieldName: 'Is_Active__c', type: 'boolean' },
-    { label: 'Confidence',  fieldName: 'Confidence__c',type: 'percent' },
+    { label: 'Confidence',  fieldName: 'Confidence__c', type: 'number',
+      typeAttributes: { minimumFractionDigits: 0, maximumFractionDigits: 0 },
+      cellAttributes: { suffix: '%' } },
     { label: 'First Seen',  fieldName: 'First_Seen__c',type: 'date',
       typeAttributes: { year: 'numeric', month: 'short', day: '2-digit' } },
     { label: 'Last Seen',   fieldName: 'Last_Seen__c', type: 'date',
@@ -82,9 +84,9 @@ export default class IocViewer extends LightningElement {
         this.searchTerm   = '';
         this.typeFilter   = '';
         this.activeFilter = 'true';
-        this.iocs         = [];
         this.selectedRows = [];
         this.errorMsg     = undefined;
+        this.handleSearch();
     }
 
     async handleSearch() {

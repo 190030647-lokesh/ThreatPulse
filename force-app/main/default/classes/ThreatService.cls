@@ -21,6 +21,7 @@ public with sharing class ThreatService {
             WHERE Is_Active__c = true
             WITH SECURITY_ENFORCED
             ORDER BY Detected_Date__c DESC
+            LIMIT 2000
         ];
     }
 
@@ -33,6 +34,7 @@ public with sharing class ThreatService {
             AND   Is_Active__c = true
             WITH SECURITY_ENFORCED
             ORDER BY Detected_Date__c DESC
+            LIMIT 2000
         ];
     }
 

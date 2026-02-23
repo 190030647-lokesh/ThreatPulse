@@ -29,7 +29,7 @@ public with sharing class IOCService {
         String likeVal = '%' + searchVal + '%';
         return [
             SELECT Id, Name, IOC_Type__c, Value__c, Threat__c, Threat__r.Name,
-                   Is_Active__c, Confidence__c
+                   Is_Active__c, Confidence__c, First_Seen__c, Last_Seen__c
             FROM Indicator_of_Compromise__c
             WHERE Value__c LIKE :likeVal
             WITH SECURITY_ENFORCED
