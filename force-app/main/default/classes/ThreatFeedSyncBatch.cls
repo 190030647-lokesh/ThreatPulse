@@ -33,18 +33,21 @@ public with sharing class ThreatFeedSyncBatch
 
                 if (!parsed.threats.isEmpty()) {
                     List<Database.SaveResult> sr = Database.insert(parsed.threats, false);
-                    for (Integer i = sr.size() - 1; i >= 0; i--) {
+                    // Collect errors but preserve original indices so threatIOCMap stays aligned
+                    for (Integer i = 0; i < sr.size(); i++) {
                         if (!sr[i].isSuccess()) {
                             errors.add(feed.Name + ' threat insert error: ' + sr[i].getErrors()[0].getMessage());
-                            parsed.threats.remove(i);
+                        } else {
+                            threatsSaved++;
                         }
                     }
-                    threatsSaved += parsed.threats.size();
 
-                    // Link each IOC to its correct parent threat using the index map
+                    // Link IOCs to their parent threat using original index map.
+                    // Skip any threat whose insert failed (Id will be null).
                     if (!parsed.threatIOCMap.isEmpty()) {
                         List<Indicator_of_Compromise__c> allIOCs = new List<Indicator_of_Compromise__c>();
                         for (Integer i = 0; i < parsed.threats.size(); i++) {
+                            if (parsed.threats[i].Id == null) continue; // insert failed
                             List<Indicator_of_Compromise__c> iocList = parsed.threatIOCMap.get(i);
                             if (iocList != null && !iocList.isEmpty()) {
                                 for (Indicator_of_Compromise__c ioc : iocList) {

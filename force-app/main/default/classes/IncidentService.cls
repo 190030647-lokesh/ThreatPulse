@@ -113,8 +113,22 @@ public with sharing class IncidentService {
     // ─── MTTD / MTTR Helpers ────────────────────────────────────────────────────
 
     public static Decimal calculateMTTD(Incident__c incident) {
-        if (incident.Detected_Date__c == null || incident.Threat__c == null) return null;
-        return null; // Placeholder — will use Threat.Detected_Date__c in full impl
+        // MTTD = time between threat detection and incident detection
+        // Requires Threat.Detected_Date__c to be populated on the incident record
+        if (incident.Detected_Date__c == null) return null;
+        // If Threat relationship is loaded with Detected_Date__c, use it
+        if (incident.getSObjectType() == Incident__c.SObjectType) {
+            try {
+                Threat__c relatedThreat = (Threat__c) incident.getSObject('Threat__r');
+                if (relatedThreat != null && relatedThreat.Detected_Date__c != null) {
+                    Long ms = incident.Detected_Date__c.getTime() - relatedThreat.Detected_Date__c.getTime();
+                    return ms >= 0 ? ms / 3600000 : 0;
+                }
+            } catch (Exception e) {
+                // Threat__r not loaded on this instance
+            }
+        }
+        return null;
     }
 
     public static Decimal calculateMTTR(Incident__c incident) {

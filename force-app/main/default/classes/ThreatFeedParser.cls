@@ -132,6 +132,11 @@ public with sharing class ThreatFeedParser {
                 String pulseName = (String) pulse.get('name');
                 String pulseDesc = (String) pulse.get('description');
 
+                if (String.isBlank(pulseName)) {
+                    result.errors.add('Skipped OTX pulse with missing name');
+                    continue;
+                }
+
                 Threat__c threat = new Threat__c(
                     Name             = pulseName,
                     Description__c   = pulseDesc,
