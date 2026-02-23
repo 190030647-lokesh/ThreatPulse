@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RemoteSiteSetting xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>MITRE ATT&amp;CK TAXII server endpoint for structured threat intelligence feed. Used by ThreatFeedSyncBatch for STIX/TAXII indicator ingestion.</description>
+    <disableProtocolSecurity>false</disableProtocolSecurity>
+    <isActive>true</isActive>
+    <url>https://cti-taxii.mitre.org</url>
+</RemoteSiteSetting>

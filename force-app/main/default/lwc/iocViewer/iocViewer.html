@@ -1,0 +1,90 @@
+<template>
+    <lightning-card title="IOC Viewer" icon-name="utility:search">
+        <!-- Search Bar -->
+        <div class="slds-m-around_small slds-grid slds-gutters_small slds-grid_vertical-align-end">
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12">
+                <lightning-input
+                    type="search"
+                    label="Search IOCs"
+                    placeholder="IP, domain, URL, hash, email..."
+                    value={searchTerm}
+                    onchange={handleSearchInput}>
+                </lightning-input>
+            </div>
+            <div class="slds-col slds-size_1-of-2 slds-medium-size_2-of-12">
+                <lightning-combobox
+                    label="Type"
+                    placeholder="All Types"
+                    options={typeOptions}
+                    value={typeFilter}
+                    onchange={handleTypeFilter}>
+                </lightning-combobox>
+            </div>
+            <div class="slds-col slds-size_1-of-2 slds-medium-size_2-of-12">
+                <lightning-combobox
+                    label="Status"
+                    placeholder="Active Only"
+                    options={activeOptions}
+                    value={activeFilter}
+                    onchange={handleActiveFilter}>
+                </lightning-combobox>
+            </div>
+            <div class="slds-col slds-shrink">
+                <lightning-button label="Search" variant="brand"
+                    icon-name="utility:search" onclick={handleSearch}>
+                </lightning-button>
+            </div>
+            <div class="slds-col slds-shrink">
+                <lightning-button label="Clear" onclick={handleClear}></lightning-button>
+            </div>
+        </div>
+
+        <!-- Stats pills -->
+        <div class="slds-m-left_small slds-m-bottom_x-small slds-grid slds-gutters_x-small">
+            <div class="slds-col">
+                <span class="slds-badge slds-badge_lightest">{recordCountLabel}</span>
+            </div>
+            <template lwc:if={hasSelected}>
+                <div class="slds-col">
+                    <lightning-button
+                        label="Deactivate Selected"
+                        variant="destructive-text"
+                        icon-name="utility:ban"
+                        onclick={handleBulkDeactivate}>
+                    </lightning-button>
+                </div>
+            </template>
+        </div>
+
+        <!-- Loading -->
+        <template lwc:if={isLoading}>
+            <div class="slds-align_absolute-center slds-p-around_large">
+                <lightning-spinner size="medium" alternative-text="Searching IOCs..."></lightning-spinner>
+            </div>
+        </template>
+
+        <!-- Results -->
+        <template lwc:else>
+            <lightning-datatable
+                key-field="Id"
+                data={iocs}
+                columns={columns}
+                onrowaction={handleRowAction}
+                onrowselection={handleRowSelection}
+                class="slds-m-horizontal_small">
+            </lightning-datatable>
+            <template lwc:if={noResults}>
+                <div class="slds-align_absolute-center slds-p-around_medium">
+                    <p class="slds-text-color_weak">No IOCs found. Use the search above to look up indicators.</p>
+                </div>
+            </template>
+        </template>
+    </lightning-card>
+
+    <!-- Error -->
+    <template lwc:if={errorMsg}>
+        <div class="slds-notify slds-notify_alert slds-alert_error slds-m-around_small" role="alert">
+            <p>{errorMsg}</p>
+        </div>
+    </template>
+</template>

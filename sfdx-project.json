@@ -1,0 +1,28 @@
+{
+  "packageDirectories": [
+    {
+      "path": "force-app",
+      "default": true,
+      "package": "ThreatPulse",
+      "versionName": "ThreatPulse v1.0 - GA",
+      "versionNumber": "1.0.0.NEXT",
+      "versionDescription": "ThreatPulse v1.0: A comprehensive Salesforce-native cybersecurity threat intelligence platform. Includes custom objects (Threats, Incidents, IOCs, Threat Feeds, MITRE Techniques, Threat Actors), Apex service layer with batch processing, Lightning Web Components, flows, validation rules, reports, dashboards, email alerts, and configurable custom metadata.",
+      "definitionFile": "config/project-scratch-def.json",
+      "releaseNotesUrl": "https://github.com/threatpulse/releases",
+      "unpackagedMetadata": {
+        "path": "unpackaged"
+      }
+    }
+  ],
+  "name": "ThreatPulse",
+  "namespace": "",
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "65.0",
+  "packageAliases": {},
+  "plugins": {
+    "lwcTestRunner": {
+      "updateSalesforceBabelPlugin": false
+    }
+  }
+}
+

@@ -1,0 +1,124 @@
+import { LightningElement, wire, track } from 'lwc';
+import { refreshApex } from '@salesforce/apex';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import getMetrics from '@salesforce/apex/DashboardMetricsController.getMetrics';
+import getRecentThreats from '@salesforce/apex/DashboardMetricsController.getRecentThreats';
+import getRecentIncidents from '@salesforce/apex/DashboardMetricsController.getRecentIncidents';
+
+const THREAT_COLUMNS = [
+    { label: 'Name',          fieldName: 'Name',             type: 'text'    },
+    { label: 'Severity',      fieldName: 'Severity__c',      type: 'text'    },
+    { label: 'Category',      fieldName: 'Category__c',      type: 'text'    },
+    { label: 'Status',        fieldName: 'Status__c',        type: 'text'    },
+    { label: 'Source',        fieldName: 'Source__c',        type: 'text'    },
+    { label: 'Detected',      fieldName: 'Detected_Date__c', type: 'date',
+      typeAttributes: { year: 'numeric', month: 'short', day: '2-digit' } }
+];
+
+const INCIDENT_COLUMNS = [
+    { label: 'Incident #',    fieldName: 'Name',             type: 'text'    },
+    { label: 'Severity',      fieldName: 'Severity__c',      type: 'text'    },
+    { label: 'Status',        fieldName: 'Status__c',        type: 'text'    },
+    { label: 'Detected',      fieldName: 'Detected_Date__c', type: 'date',
+      typeAttributes: { year: 'numeric', month: 'short', day: '2-digit' } },
+    { label: 'Resolved',      fieldName: 'Resolved_Date__c', type: 'date',
+      typeAttributes: { year: 'numeric', month: 'short', day: '2-digit' } }
+];
+
+export default class ThreatDashboard extends LightningElement {
+    @track metrics;
+    @track recentThreats = [];
+    @track recentIncidents = [];
+    @track error;
+
+    threatColumns    = THREAT_COLUMNS;
+    incidentColumns  = INCIDENT_COLUMNS;
+
+    _metricsWired;
+    _threatsWired;
+    _incidentsWired;
+
+    @wire(getMetrics)
+    wiredMetrics(result) {
+        this._metricsWired = result;
+        if (result.data) {
+            this.error   = undefined;
+            this.metrics = this._enrichMetrics(result.data);
+        } else if (result.error) {
+            this.error   = this._errorMsg(result.error);
+            this.metrics = undefined;
+        }
+    }
+
+    @wire(getRecentThreats, { limitCount: 10 })
+    wiredThreats(result) {
+        this._threatsWired = result;
+        if (result.data) {
+            this.recentThreats = result.data;
+        }
+    }
+
+    @wire(getRecentIncidents, { limitCount: 10 })
+    wiredIncidents(result) {
+        this._incidentsWired = result;
+        if (result.data) {
+            this.recentIncidents = result.data;
+        }
+    }
+
+    // ─── Computed ───────────────────────────────────────────────────────────────
+
+    get hasSeverityData() {
+        return this.metrics && this.metrics.bySeverity && this.metrics.bySeverity.length > 0;
+    }
+
+    get hasCategoryData() {
+        return this.metrics && this.metrics.byCategory && this.metrics.byCategory.length > 0;
+    }
+
+    // Inverse getters for lwc:if (templates don't support ! negation)
+    get noSeverityData() { return !this.hasSeverityData; }
+    get noCategoryData() { return !this.hasCategoryData; }
+    get showSpinner()    { return !this.error; }
+
+    // ─── Enrich metrics with bar chart widths ────────────────────────────────────
+
+    _enrichMetrics(raw) {
+        const enriched = { ...raw };
+
+        const sevMax = raw.bySeverity && raw.bySeverity.length
+            ? Math.max(...raw.bySeverity.map(r => r.count)) : 1;
+
+        enriched.bySeverity = (raw.bySeverity || []).map(r => ({
+            ...r,
+            barStyle: `width:${Math.round((r.count / sevMax) * 100)}%`
+        }));
+
+        const catMax = raw.byCategory && raw.byCategory.length
+            ? Math.max(...raw.byCategory.map(r => r.count)) : 1;
+
+        enriched.byCategory = (raw.byCategory || []).map(r => ({
+            ...r,
+            barStyle: `width:${Math.round((r.count / catMax) * 100)}%`
+        }));
+
+        return enriched;
+    }
+
+    // ─── Handlers ───────────────────────────────────────────────────────────────
+
+    handleRefresh() {
+        refreshApex(this._metricsWired);
+        refreshApex(this._threatsWired);
+        refreshApex(this._incidentsWired);
+        this.dispatchEvent(new ShowToastEvent({
+            title: 'Dashboard', message: 'Refreshing data…', variant: 'info', mode: 'dismissable'
+        }));
+    }
+
+    _errorMsg(err) {
+        if (Array.isArray(err.body)) return err.body.map(e => e.message).join(', ');
+        if (err.body && err.body.message) return err.body.message;
+        return err.message || 'Unknown error';
+    }
+}

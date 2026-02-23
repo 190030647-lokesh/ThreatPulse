@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Resolved_Date_Required_On_Closure</fullName>
+    <active>true</active>
+    <description>Resolved Date must be set when an incident is Resolved or Closed.</description>
+    <errorConditionFormula>(ISPICKVAL(Status__c, 'Resolved') || ISPICKVAL(Status__c, 'Closed')) &amp;&amp; ISBLANK(Resolved_Date__c)</errorConditionFormula>
+    <errorMessage>Resolved Date is required when Status is Resolved or Closed.</errorMessage>
+    <errorDisplayField>Resolved_Date__c</errorDisplayField>
+</ValidationRule>

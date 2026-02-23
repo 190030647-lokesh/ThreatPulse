@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Active_Feed_Requires_URL</fullName>
+    <active>true</active>
+    <description>An active Threat Feed must have a Feed URL configured.</description>
+    <errorConditionFormula>Is_Active__c &amp;&amp; ISBLANK(Feed_URL__c)</errorConditionFormula>
+    <errorMessage>Feed URL is required for all active Threat Feeds.</errorMessage>
+    <errorDisplayField>Feed_URL__c</errorDisplayField>
+</ValidationRule>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ReportType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <baseObject>Incident__c</baseObject>
+    <category>other</category>
+    <deployed>true</deployed>
+    <description>Reports on Security Incident records</description>
+    <label>Security Incidents</label>
+    <sections>
+        <masterLabel>Incident Information</masterLabel>
+        <columns>
+            <field>Name</field>
+            <table>Incident__c</table>
+        </columns>
+        <columns>
+            <field>Status__c</field>
+            <table>Incident__c</table>
+        </columns>
+        <columns>
+            <field>Severity__c</field>
+            <table>Incident__c</table>
+        </columns>
+        <columns>
+            <field>Assigned_Analyst__c</field>
+            <table>Incident__c</table>
+        </columns>
+        <columns>
+            <field>Detected_Date__c</field>
+            <table>Incident__c</table>
+        </columns>
+        <columns>
+            <field>Resolved_Date__c</field>
+            <table>Incident__c</table>
+        </columns>
+        <columns>
+            <field>Resolution_Notes__c</field>
+            <table>Incident__c</table>
+        </columns>
+        <columns>
+            <field>Threat__c</field>
+            <table>Incident__c</table>
+        </columns>
+    </sections>
+</ReportType>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Require_Description_Before_Closing</fullName>
+    <active>true</active>
+    <description>A threat cannot be Resolved or Closed without a description explaining the outcome.</description>
+    <errorConditionFormula>(ISPICKVAL(Status__c, 'Resolved') || ISPICKVAL(Status__c, 'Closed')) &amp;&amp; ISBLANK(Description__c)</errorConditionFormula>
+    <errorMessage>A description is required before marking a threat as Resolved or Closed.</errorMessage>
+</ValidationRule>

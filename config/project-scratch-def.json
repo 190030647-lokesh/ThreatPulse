@@ -1,0 +1,34 @@
+{
+  "orgName": "ThreatPulse",
+  "edition": "Developer",
+  "features": [
+    "EnableSetPasswordInApi",
+    "API"
+  ],
+  "settings": {
+    "lightningExperienceSettings": {
+      "enableS1DesktopEnabled": true
+    },
+    "mobileSettings": {
+      "enableS1EncryptedStoragePref2": false
+    },
+    "emailAdministrationSettings": {
+      "enableEnhancedEmailEnabled": true
+    },
+    "securitySettings": {
+      "sessionSettings": {
+        "sessionTimeout": "TwoHours",
+        "forceRelogin": true,
+        "requireHttps": true
+      }
+    },
+    "flowSettings": {
+      "enableFlowUseApexExceptionEmail": true
+    },
+    "caseSettings": {
+      "systemUserEmail": "noreply@threatpulse.com"
+    }
+  },
+  "adminEmail": "admin@threatpulse.com",
+  "description": "ThreatPulse scratch org for cybersecurity threat intelligence platform development and testing."
+}

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <assignments>
+        <name>Set_Threat_Inactive</name>
+        <label>Set Is Active to False</label>
+        <locationX>176</locationX>
+        <locationY>252</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Is_Active__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <description>When a Threat is Closed, automatically sets Is_Active to false.</description>
+    <interviewLabel>Threat Deactivate On Close {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Threat: Deactivate On Close</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Set_Threat_Inactive</targetReference>
+        </connector>
+        <filterFormula>ISPICKVAL({!$Record.Status__c}, &apos;Closed&apos;) &amp;&amp; {!$Record.Is_Active__c}</filterFormula>
+        <object>Threat__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

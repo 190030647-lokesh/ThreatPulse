@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Last_Seen_Not_Before_First_Seen</fullName>
+    <active>true</active>
+    <description>Last Seen date cannot be earlier than First Seen date.</description>
+    <errorConditionFormula>NOT(ISBLANK(Last_Seen__c)) &amp;&amp; NOT(ISBLANK(First_Seen__c)) &amp;&amp; Last_Seen__c &lt; First_Seen__c</errorConditionFormula>
+    <errorMessage>Last Seen date cannot be earlier than First Seen date.</errorMessage>
+    <errorDisplayField>Last_Seen__c</errorDisplayField>
+</ValidationRule>

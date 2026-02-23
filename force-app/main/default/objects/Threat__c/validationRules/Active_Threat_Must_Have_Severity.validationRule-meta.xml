@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Active_Threat_Must_Have_Severity</fullName>
+    <active>true</active>
+    <description>An active threat must have a Severity assigned.</description>
+    <errorConditionFormula>Is_Active__c &amp;&amp; ISBLANK(TEXT(Severity__c))</errorConditionFormula>
+    <errorMessage>Severity is required for all active threats.</errorMessage>
+    <errorDisplayField>Severity__c</errorDisplayField>
+</ValidationRule>

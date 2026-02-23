@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ReportType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <baseObject>Indicator_of_Compromise__c</baseObject>
+    <category>other</category>
+    <deployed>true</deployed>
+    <description>Reports on Indicators of Compromise</description>
+    <label>Indicators of Compromise</label>
+    <sections>
+        <masterLabel>IOC Information</masterLabel>
+        <columns>
+            <field>Name</field>
+            <table>Indicator_of_Compromise__c</table>
+        </columns>
+        <columns>
+            <field>IOC_Type__c</field>
+            <table>Indicator_of_Compromise__c</table>
+        </columns>
+        <columns>
+            <field>Value__c</field>
+            <table>Indicator_of_Compromise__c</table>
+        </columns>
+        <columns>
+            <field>Is_Active__c</field>
+            <table>Indicator_of_Compromise__c</table>
+        </columns>
+        <columns>
+            <field>Confidence__c</field>
+            <table>Indicator_of_Compromise__c</table>
+        </columns>
+        <columns>
+            <field>First_Seen__c</field>
+            <table>Indicator_of_Compromise__c</table>
+        </columns>
+        <columns>
+            <field>Last_Seen__c</field>
+            <table>Indicator_of_Compromise__c</table>
+        </columns>
+        <columns>
+            <field>Threat__c</field>
+            <table>Indicator_of_Compromise__c</table>
+        </columns>
+        <columns>
+            <field>Description__c</field>
+            <table>Indicator_of_Compromise__c</table>
+        </columns>
+    </sections>
+</ReportType>

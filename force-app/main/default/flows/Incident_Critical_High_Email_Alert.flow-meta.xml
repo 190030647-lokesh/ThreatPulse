@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <description>Sends an email to the assigned analyst when a new Critical or High severity Incident is created.</description>
+    <environments>Default</environments>
+    <interviewLabel>Incident Critical High Email Alert {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Incident Critical High Email Alert</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <textTemplates>
+        <name>IncidentAlertEmailBody</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;&lt;strong&gt;ThreatPulse Alert: {!$Record.Severity__c} Severity Incident Opened&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;A new {!$Record.Severity__c} severity incident has been created and requires analyst attention.&lt;/p&gt;
+&lt;br/&gt;
+&lt;p&gt;&lt;strong&gt;Incident Details:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Name:&lt;/strong&gt; {!$Record.Name}&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Severity:&lt;/strong&gt; {!$Record.Severity__c}&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Status:&lt;/strong&gt; {!$Record.Status__c}&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Detected Date:&lt;/strong&gt; {!$Record.Detected_Date__c}&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Assigned Analyst:&lt;/strong&gt; {!$Record.Assigned_Analyst__r.Name}&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Please log in to ThreatPulse to begin the incident response process immediately.&lt;/p&gt;</text>
+    </textTemplates>
+    <actionCalls>
+        <name>Send_Incident_Alert_Email</name>
+        <label>Send Incident Alert Email</label>
+        <locationX>176</locationX>
+        <locationY>120</locationY>
+        <actionName>emailSimple</actionName>
+        <actionType>emailSimple</actionType>
+        <inputParameters>
+            <name>emailAddresses</name>
+            <value>
+                <stringValue>{!$Record.Owner:User.Email}</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailSubject</name>
+            <value>
+                <stringValue>[ThreatPulse] {!$Record.Severity__c} Incident Alert: {!$Record.Name}</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailBody</name>
+            <value>
+                <elementReference>IncidentAlertEmailBody</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>sendRichBody</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Send_Incident_Alert_Email</targetReference>
+        </connector>
+        <filterLogic>1 OR 2</filterLogic>
+        <filters>
+            <field>Severity__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Critical</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Severity__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>High</stringValue>
+            </value>
+        </filters>
+        <object>Incident__c</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

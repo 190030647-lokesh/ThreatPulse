@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Severity__c</fullName>
+    <label>Severity</label>
+    <type>Picklist</type>
+    <required>true</required>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>P1 - Critical</fullName>
+                <default>false</default>
+                <label>P1 - Critical</label>
+            </value>
+            <value>
+                <fullName>P2 - High</fullName>
+                <default>false</default>
+                <label>P2 - High</label>
+            </value>
+            <value>
+                <fullName>P3 - Medium</fullName>
+                <default>true</default>
+                <label>P3 - Medium</label>
+            </value>
+            <value>
+                <fullName>P4 - Low</fullName>
+                <default>false</default>
+                <label>P4 - Low</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

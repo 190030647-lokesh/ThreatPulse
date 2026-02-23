@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>IOC_Value_Cannot_Be_Blank</fullName>
+    <active>true</active>
+    <description>Every IOC record must have a Value defined.</description>
+    <errorConditionFormula>ISBLANK(Value__c)</errorConditionFormula>
+    <errorMessage>IOC Value cannot be blank. Please enter the indicator value (e.g. IP address, domain, hash).</errorMessage>
+    <errorDisplayField>Value__c</errorDisplayField>
+</ValidationRule>

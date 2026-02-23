@@ -1,0 +1,66 @@
+<template>
+    <lightning-card title="Incident Tracker" icon-name="utility:incident">
+
+        <!-- Filter Tabs -->
+        <div class="slds-m-around_small">
+            <lightning-tabset active-tab-value={activeTab} onselect={handleTabChange}>
+                <lightning-tab label="Open" value="Open"></lightning-tab>
+                <lightning-tab label="In Progress" value="In Progress"></lightning-tab>
+                <lightning-tab label="Resolved" value="Resolved"></lightning-tab>
+                <lightning-tab label="All" value="All"></lightning-tab>
+            </lightning-tabset>
+        </div>
+
+        <div class="slds-m-horizontal_small slds-m-bottom_x-small">
+            <span class="slds-text-color_weak">{recordCountLabel}</span>
+        </div>
+
+        <lightning-datatable
+            key-field="Id"
+            data={filteredIncidents}
+            columns={columns}
+            hide-checkbox-column
+            onrowaction={handleRowAction}
+            class="slds-m-horizontal_small">
+        </lightning-datatable>
+    </lightning-card>
+
+    <!-- Resolve Modal -->
+    <template lwc:if={showResolveModal}>
+        <section role="dialog" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 class="slds-modal__title">Resolve Incident</h2>
+                    <button class="slds-button slds-button_icon slds-modal__close" onclick={handleCloseModal}>
+                        <lightning-icon icon-name="utility:close" size="small"></lightning-icon>
+                    </button>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <p class="slds-m-bottom_small">
+                        Resolving: <strong>{selectedIncidentName}</strong>
+                    </p>
+                    <lightning-textarea
+                        label="Resolution Notes"
+                        required
+                        placeholder="Describe how the incident was resolved..."
+                        value={resolutionNotes}
+                        onchange={handleNotesChange}>
+                    </lightning-textarea>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button label="Cancel" onclick={handleCloseModal}></lightning-button>
+                    <lightning-button variant="success" label="Mark Resolved"
+                        onclick={handleConfirmResolve} class="slds-m-left_small"></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <!-- Error -->
+    <template lwc:if={errorMsg}>
+        <div class="slds-notify slds-notify_alert slds-alert_error slds-m-around_small" role="alert">
+            <p>{errorMsg}</p>
+        </div>
+    </template>
+</template>

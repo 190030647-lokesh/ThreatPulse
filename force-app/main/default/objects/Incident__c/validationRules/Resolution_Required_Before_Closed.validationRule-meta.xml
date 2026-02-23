@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Resolution_Required_Before_Closed</fullName>
+    <active>true</active>
+    <description>Resolution Notes must be populated before an incident can be Resolved or Closed.</description>
+    <errorConditionFormula>(ISPICKVAL(Status__c, 'Resolved') || ISPICKVAL(Status__c, 'Closed')) &amp;&amp; ISBLANK(Resolution_Notes__c)</errorConditionFormula>
+    <errorMessage>Resolution Notes are required before marking an incident as Resolved or Closed.</errorMessage>
+    <errorDisplayField>Resolution_Notes__c</errorDisplayField>
+</ValidationRule>

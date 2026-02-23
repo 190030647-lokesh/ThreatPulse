@@ -1,0 +1,146 @@
+<template>
+    <div class="slds-page-header slds-page-header_object-home">
+        <div class="slds-page-header__row">
+            <div class="slds-page-header__col-title">
+                <h1 class="slds-page-header__title">ThreatPulse Dashboard</h1>
+            </div>
+            <div class="slds-page-header__col-actions">
+                <lightning-button label="Refresh" icon-name="utility:refresh"
+                    onclick={handleRefresh}></lightning-button>
+            </div>
+        </div>
+    </div>
+
+    <template if:true={error}>
+        <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+            <span class="slds-assistive-text">error</span>
+            <p>{error}</p>
+        </div>
+    </template>
+
+    <template lwc:if={metrics}>
+        <!-- KPI Cards -->
+        <div class="slds-grid slds-wrap slds-gutters slds-m-top_medium">
+            <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-5 slds-m-bottom_small">
+                <div class="kpi-card kpi-total">
+                    <p class="kpi-number">{metrics.totalActiveThreats}</p>
+                    <p class="kpi-label">Active Threats</p>
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-5 slds-m-bottom_small">
+                <div class="kpi-card kpi-critical">
+                    <p class="kpi-number">{metrics.criticalThreats}</p>
+                    <p class="kpi-label">P1 Critical</p>
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-5 slds-m-bottom_small">
+                <div class="kpi-card kpi-high">
+                    <p class="kpi-number">{metrics.highThreats}</p>
+                    <p class="kpi-label">P2 High</p>
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-5 slds-m-bottom_small">
+                <div class="kpi-card kpi-incident">
+                    <p class="kpi-number">{metrics.openIncidents}</p>
+                    <p class="kpi-label">Open Incidents</p>
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-5 slds-m-bottom_small">
+                <div class="kpi-card kpi-ioc">
+                    <p class="kpi-number">{metrics.totalIOCs}</p>
+                    <p class="kpi-label">Active IOCs</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Breakdown Charts -->
+        <div class="slds-grid slds-wrap slds-gutters slds-m-top_medium">
+
+            <!-- By Severity -->
+            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2 slds-m-bottom_small">
+                <lightning-card title="Threats by Severity" icon-name="utility:shield">
+                    <div class="slds-m-around_medium">
+                        <template for:each={metrics.bySeverity} for:item="row">
+                            <div key={row.label} class="slds-grid slds-grid_vertical-align-center slds-m-bottom_x-small">
+                                <div class="slds-col slds-size_3-of-12">
+                                    <span class="slds-truncate bar-label">{row.label}</span>
+                                </div>
+                                <div class="slds-col slds-size_8-of-12">
+                                    <div class="bar-track">
+                                        <div class="bar-fill" style={row.barStyle}></div>
+                                    </div>
+                                </div>
+                                <div class="slds-col slds-size_1-of-12 slds-text-align_right">
+                                    <strong>{row.count}</strong>
+                                </div>
+                            </div>
+                        </template>
+                        <template lwc:if={noSeverityData}>
+                            <p class="slds-text-color_weak">No active threats</p>
+                        </template>
+                    </div>
+                </lightning-card>
+            </div>
+
+            <!-- By Category -->
+            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2 slds-m-bottom_small">
+                <lightning-card title="Threats by Category" icon-name="utility:category">
+                    <div class="slds-m-around_medium">
+                        <template for:each={metrics.byCategory} for:item="row">
+                            <div key={row.label} class="slds-grid slds-grid_vertical-align-center slds-m-bottom_x-small">
+                                <div class="slds-col slds-size_3-of-12">
+                                    <span class="slds-truncate bar-label">{row.label}</span>
+                                </div>
+                                <div class="slds-col slds-size_8-of-12">
+                                    <div class="bar-track">
+                                        <div class="bar-fill bar-fill-cat" style={row.barStyle}></div>
+                                    </div>
+                                </div>
+                                <div class="slds-col slds-size_1-of-12 slds-text-align_right">
+                                    <strong>{row.count}</strong>
+                                </div>
+                            </div>
+                        </template>
+                        <template lwc:if={noCategoryData}>
+                            <p class="slds-text-color_weak">No active threats</p>
+                        </template>
+                    </div>
+                </lightning-card>
+            </div>
+        </div>
+
+        <!-- Recent Threats -->
+        <div class="slds-m-top_medium slds-m-bottom_small">
+            <lightning-card title="Recent Active Threats" icon-name="utility:warning">
+                <lightning-datatable
+                    key-field="Id"
+                    data={recentThreats}
+                    columns={threatColumns}
+                    hide-checkbox-column
+                    class="slds-m-around_small">
+                </lightning-datatable>
+            </lightning-card>
+        </div>
+
+        <!-- Recent Incidents -->
+        <div class="slds-m-top_small slds-m-bottom_medium">
+            <lightning-card title="Recent Incidents" icon-name="utility:incident">
+                <lightning-datatable
+                    key-field="Id"
+                    data={recentIncidents}
+                    columns={incidentColumns}
+                    hide-checkbox-column
+                    class="slds-m-around_small">
+                </lightning-datatable>
+            </lightning-card>
+        </div>
+    </template>
+
+    <template lwc:else>
+        <template lwc:if={showSpinner}>
+            <div class="slds-align_absolute-center slds-m-top_xx-large">
+                <lightning-spinner alternative-text="Loading dashboard..." size="large"></lightning-spinner>
+            </div>
+        </template>
+    </template>
+</template>

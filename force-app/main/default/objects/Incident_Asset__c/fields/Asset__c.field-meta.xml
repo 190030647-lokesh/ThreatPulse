@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Asset__c</fullName>
+    <label>Asset</label>
+    <type>MasterDetail</type>
+    <referenceTo>Asset__c</referenceTo>
+    <relationshipLabel>Incident Assets</relationshipLabel>
+    <relationshipName>Asset_Incidents</relationshipName>
+    <relationshipOrder>1</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>

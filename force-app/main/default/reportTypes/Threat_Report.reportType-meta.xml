@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ReportType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <baseObject>Threat__c</baseObject>
+    <category>other</category>
+    <deployed>true</deployed>
+    <description>Reports on Threat intelligence records</description>
+    <label>Threats</label>
+    <sections>
+        <masterLabel>Threat Information</masterLabel>
+        <columns>
+            <field>Name</field>
+            <table>Threat__c</table>
+        </columns>
+        <columns>
+            <field>Status__c</field>
+            <table>Threat__c</table>
+        </columns>
+        <columns>
+            <field>Severity__c</field>
+            <table>Threat__c</table>
+        </columns>
+        <columns>
+            <field>Category__c</field>
+            <table>Threat__c</table>
+        </columns>
+        <columns>
+            <field>Is_Active__c</field>
+            <table>Threat__c</table>
+        </columns>
+        <columns>
+            <field>Detected_Date__c</field>
+            <table>Threat__c</table>
+        </columns>
+        <columns>
+            <field>Description__c</field>
+            <table>Threat__c</table>
+        </columns>
+        <columns>
+            <field>Confidence_Score__c</field>
+            <table>Threat__c</table>
+        </columns>
+        <columns>
+            <field>Source__c</field>
+            <table>Threat__c</table>
+        </columns>
+    </sections>
+</ReportType>

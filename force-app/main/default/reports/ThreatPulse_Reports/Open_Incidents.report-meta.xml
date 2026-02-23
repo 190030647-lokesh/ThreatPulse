@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>Incident__c$Name</field>
+    </columns>
+    <columns>
+        <field>Incident__c$Status__c</field>
+    </columns>
+    <columns>
+        <field>Incident__c$Severity__c</field>
+    </columns>
+    <columns>
+        <field>Incident__c$Assigned_Analyst__c</field>
+    </columns>
+    <columns>
+        <field>Incident__c$Detected_Date__c</field>
+    </columns>
+    <columns>
+        <field>Incident__c$Resolved_Date__c</field>
+    </columns>
+    <description>All open and in-progress incidents requiring analyst attention.</description>
+    <filter>
+        <criteriaItems>
+            <column>Incident__c$Status__c</column>
+            <isUnlocked>true</isUnlocked>
+            <operator>notEqual</operator>
+            <value>Closed</value>
+        </criteriaItems>
+    </filter>
+    <format>Tabular</format>
+    <name>Open Incidents</name>
+    <reportType>Incident_Report__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>false</showSubTotals>
+</Report>
+

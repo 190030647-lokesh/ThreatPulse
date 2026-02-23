@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Dashboard xmlns="http://soap.sforce.com/2006/04/metadata">
+    <backgroundEndColor>#FFFFFF</backgroundEndColor>
+    <backgroundFadeDirection>Diagonal</backgroundFadeDirection>
+    <backgroundStartColor>#FFFFFF</backgroundStartColor>
+    <dashboardType>LoggedInUser</dashboardType>
+    <description>Executive overview of threat intelligence: active threats, incidents, and IOCs.</description>
+    <leftSection>
+        <columnSize>Medium</columnSize>
+        <components>
+            <componentType>Metric</componentType>
+            <displayUnits>Auto</displayUnits>
+            <footer>Total Active Threats</footer>
+            <header>Active Threats</header>
+            <indicatorBreakpoint1>10.0</indicatorBreakpoint1>
+            <indicatorBreakpoint2>25.0</indicatorBreakpoint2>
+            <indicatorHighColor>#FF0000</indicatorHighColor>
+            <indicatorLowColor>#54C254</indicatorLowColor>
+            <indicatorMiddleColor>#FF9A00</indicatorMiddleColor>
+            <metricLabel>Count</metricLabel>
+            <report>ThreatPulse_Reports/Threats_By_Severity</report>
+            <useReportChart>false</useReportChart>
+        </components>
+        <components>
+            <chartAxisRange>Auto</chartAxisRange>
+            <componentType>Bar</componentType>
+            <displayUnits>Auto</displayUnits>
+            <footer>Threats by Severity</footer>
+            <header>Threat Severity Breakdown</header>
+            <legendPosition>Bottom</legendPosition>
+            <report>ThreatPulse_Reports/Threats_By_Severity</report>
+            <showPercentage>false</showPercentage>
+            <showTotal>true</showTotal>
+            <showValues>false</showValues>
+            <sortBy>RowLabelAscending</sortBy>
+        </components>
+    </leftSection>
+    <middleSection>
+        <columnSize>Medium</columnSize>
+        <components>
+            <componentType>Metric</componentType>
+            <displayUnits>Auto</displayUnits>
+            <footer>Incidents requiring attention</footer>
+            <header>Open Incidents</header>
+            <indicatorBreakpoint1>5.0</indicatorBreakpoint1>
+            <indicatorBreakpoint2>15.0</indicatorBreakpoint2>
+            <indicatorHighColor>#FF0000</indicatorHighColor>
+            <indicatorLowColor>#54C254</indicatorLowColor>
+            <indicatorMiddleColor>#FF9A00</indicatorMiddleColor>
+            <metricLabel>Count</metricLabel>
+            <report>ThreatPulse_Reports/Open_Incidents</report>
+            <useReportChart>false</useReportChart>
+        </components>
+        <components>
+            <chartAxisRange>Auto</chartAxisRange>
+            <componentType>Bar</componentType>
+            <displayUnits>Auto</displayUnits>
+            <footer>Active threats by category</footer>
+            <header>Threat Category Landscape</header>
+            <legendPosition>Bottom</legendPosition>
+            <report>ThreatPulse_Reports/Active_Threats_By_Category</report>
+            <showPercentage>false</showPercentage>
+            <showTotal>true</showTotal>
+            <showValues>false</showValues>
+            <sortBy>RowLabelAscending</sortBy>
+        </components>
+    </middleSection>
+    <rightSection>
+        <columnSize>Medium</columnSize>
+        <components>
+            <componentType>Metric</componentType>
+            <displayUnits>Auto</displayUnits>
+            <footer>Currently active IOCs</footer>
+            <header>Active IOCs</header>
+            <indicatorBreakpoint1>20.0</indicatorBreakpoint1>
+            <indicatorBreakpoint2>50.0</indicatorBreakpoint2>
+            <indicatorHighColor>#FF0000</indicatorHighColor>
+            <indicatorLowColor>#54C254</indicatorLowColor>
+            <indicatorMiddleColor>#FF9A00</indicatorMiddleColor>
+            <metricLabel>Count</metricLabel>
+            <report>ThreatPulse_Reports/Active_IOCs</report>
+            <useReportChart>false</useReportChart>
+        </components>
+        <components>
+            <componentType>Metric</componentType>
+            <displayUnits>Auto</displayUnits>
+            <footer>IOC types being monitored</footer>
+            <header>IOC Watch List</header>
+            <indicatorBreakpoint1>10.0</indicatorBreakpoint1>
+            <indicatorBreakpoint2>30.0</indicatorBreakpoint2>
+            <indicatorHighColor>#FF0000</indicatorHighColor>
+            <indicatorLowColor>#54C254</indicatorLowColor>
+            <indicatorMiddleColor>#FF9A00</indicatorMiddleColor>
+            <metricLabel>Active IOCs</metricLabel>
+            <report>ThreatPulse_Reports/Active_IOCs</report>
+            <useReportChart>false</useReportChart>
+        </components>
+    </rightSection>
+    <textColor>#000000</textColor>
+    <title>ThreatPulse Executive Dashboard</title>
+    <titleColor>#000000</titleColor>
+    <titleSize>12</titleSize>
+</Dashboard>

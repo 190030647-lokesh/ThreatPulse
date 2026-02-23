@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>IOC_Type__c</fullName>
+    <label>IOC Type</label>
+    <type>Picklist</type>
+    <required>true</required>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>IP Address</fullName>
+                <default>false</default>
+                <label>IP Address</label>
+            </value>
+            <value>
+                <fullName>Domain</fullName>
+                <default>false</default>
+                <label>Domain</label>
+            </value>
+            <value>
+                <fullName>URL</fullName>
+                <default>false</default>
+                <label>URL</label>
+            </value>
+            <value>
+                <fullName>File Hash MD5</fullName>
+                <default>false</default>
+                <label>File Hash (MD5)</label>
+            </value>
+            <value>
+                <fullName>File Hash SHA1</fullName>
+                <default>false</default>
+                <label>File Hash (SHA1)</label>
+            </value>
+            <value>
+                <fullName>File Hash SHA256</fullName>
+                <default>false</default>
+                <label>File Hash (SHA256)</label>
+            </value>
+            <value>
+                <fullName>Email</fullName>
+                <default>false</default>
+                <label>Email Address</label>
+            </value>
+            <value>
+                <fullName>Registry Key</fullName>
+                <default>false</default>
+                <label>Registry Key</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

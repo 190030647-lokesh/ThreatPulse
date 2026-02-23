@@ -1,0 +1,114 @@
+<template>
+    <lightning-card title="Threat Intelligence" icon-name="utility:shield">
+        <!-- Filter Bar -->
+        <div class="slds-m-around_small slds-grid slds-wrap slds-gutters_small">
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-12">
+                <lightning-input
+                    type="search"
+                    label="Search Threats"
+                    placeholder="Search by name..."
+                    value={searchTerm}
+                    onchange={handleSearch}>
+                </lightning-input>
+            </div>
+            <div class="slds-col slds-size_1-of-2 slds-medium-size_2-of-12">
+                <lightning-combobox
+                    label="Severity"
+                    placeholder="All"
+                    options={severityOptions}
+                    value={severityFilter}
+                    onchange={handleSeverityFilter}>
+                </lightning-combobox>
+            </div>
+            <div class="slds-col slds-size_1-of-2 slds-medium-size_2-of-12">
+                <lightning-combobox
+                    label="Status"
+                    placeholder="All"
+                    options={statusOptions}
+                    value={statusFilter}
+                    onchange={handleStatusFilter}>
+                </lightning-combobox>
+            </div>
+            <div class="slds-col slds-size_1-of-2 slds-medium-size_2-of-12">
+                <lightning-combobox
+                    label="Category"
+                    placeholder="All"
+                    options={categoryOptions}
+                    value={categoryFilter}
+                    onchange={handleCategoryFilter}>
+                </lightning-combobox>
+            </div>
+            <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-12 slds-align-bottom">
+                <lightning-button label="Clear" onclick={handleClearFilters}></lightning-button>
+            </div>
+            <div class="slds-col slds-size_1-of-2 slds-medium-size_2-of-12 slds-align-bottom">
+                <lightning-button
+                    label="New Threat"
+                    variant="brand"
+                    icon-name="utility:add"
+                    onclick={handleNewThreat}>
+                </lightning-button>
+            </div>
+        </div>
+
+        <!-- Record count -->
+        <div class="slds-m-left_small slds-m-bottom_x-small">
+            <span class="slds-text-color_weak">{recordCountLabel}</span>
+        </div>
+
+        <!-- Datatable -->
+        <lightning-datatable
+            key-field="Id"
+            data={filteredThreats}
+            columns={columns}
+            hide-checkbox-column
+            row-number-offset={rowOffset}
+            onrowaction={handleRowAction}
+            class="slds-m-horizontal_small">
+        </lightning-datatable>
+    </lightning-card>
+
+    <!-- New/Edit Threat Modal -->
+    <template lwc:if={showModal}>
+        <section role="dialog" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 class="slds-modal__title">{modalTitle}</h2>
+                    <button class="slds-button slds-button_icon slds-modal__close" onclick={handleCloseModal}>
+                        <lightning-icon icon-name="utility:close" size="small"></lightning-icon>
+                    </button>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <lightning-input label="Threat Name" required
+                        value={modalData.name} data-field="name"
+                        onchange={handleModalFieldChange}></lightning-input>
+                    <lightning-combobox label="Severity" required class="slds-m-top_small"
+                        options={severityOptions} value={modalData.severity} data-field="severity"
+                        onchange={handleModalFieldChange}></lightning-combobox>
+                    <lightning-combobox label="Category" class="slds-m-top_small"
+                        options={categoryOptions} value={modalData.category} data-field="category"
+                        onchange={handleModalFieldChange}></lightning-combobox>
+                    <lightning-input label="Source" class="slds-m-top_small"
+                        value={modalData.source} data-field="source"
+                        onchange={handleModalFieldChange}></lightning-input>
+                    <lightning-textarea label="Description" class="slds-m-top_small"
+                        value={modalData.description} data-field="description"
+                        onchange={handleModalFieldChange}></lightning-textarea>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button label="Cancel" onclick={handleCloseModal}></lightning-button>
+                    <lightning-button variant="brand" label="Save Threat"
+                        onclick={handleSaveThreat} class="slds-m-left_small"></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <!-- Error toast area -->
+    <template lwc:if={errorMsg}>
+        <div class="slds-notify slds-notify_alert slds-alert_error slds-m-around_small" role="alert">
+            <p>{errorMsg}</p>
+        </div>
+    </template>
+</template>
