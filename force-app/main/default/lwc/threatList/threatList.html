@@ -51,15 +51,32 @@
             </div>
         </div>
 
-        <!-- Record count -->
-        <div class="slds-m-left_small slds-m-bottom_x-small">
-            <span class="slds-text-color_weak">{recordCountLabel}</span>
+        <!-- Record count + pagination -->
+        <div class="slds-grid slds-grid_vertical-align-center slds-m-horizontal_small slds-m-bottom_x-small">
+            <div class="slds-col">
+                <span class="slds-text-color_weak">{recordCountLabel}</span>
+            </div>
+            <div class="slds-col slds-text-align_right">
+                <lightning-button-icon
+                    icon-name="utility:chevronleft"
+                    alternative-text="Previous"
+                    disabled={noPrevPage}
+                    onclick={handlePrevPage}
+                    class="slds-m-right_x-small">
+                </lightning-button-icon>
+                <lightning-button-icon
+                    icon-name="utility:chevronright"
+                    alternative-text="Next"
+                    disabled={noNextPage}
+                    onclick={handleNextPage}>
+                </lightning-button-icon>
+            </div>
         </div>
 
         <!-- Datatable -->
         <lightning-datatable
             key-field="Id"
-            data={filteredThreats}
+            data={pagedThreats}
             columns={columns}
             hide-checkbox-column
             row-number-offset={rowOffset}

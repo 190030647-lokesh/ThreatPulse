@@ -55,6 +55,8 @@ const COLUMNS = [
     }
 ];
 
+const PAGE_SIZE = 25;
+
 export default class ThreatList extends LightningElement {
     @track allThreats    = [];
     @track errorMsg;
@@ -65,6 +67,7 @@ export default class ThreatList extends LightningElement {
     @track statusFilter    = '';
     @track categoryFilter  = '';
     @track searchTerm      = '';
+    @track currentPage     = 1;
     rowOffset              = 0;
 
     severityOptions  = SEVERITY_OPTIONS;
@@ -100,20 +103,45 @@ export default class ThreatList extends LightningElement {
         });
     }
 
-    get recordCountLabel() {
-        const count = this.filteredThreats.length;
-        return `${count} record${count !== 1 ? 's' : ''}`;
+    // ─── Pagination ───────────────────────────────────────────────────────────────
+
+    get pagedThreats() {
+        const start = (this.currentPage - 1) * PAGE_SIZE;
+        return this.filteredThreats.slice(start, start + PAGE_SIZE);
     }
 
-    handleSearch(event)         { this.searchTerm     = event.detail.value;        }
-    handleSeverityFilter(event) { this.severityFilter  = event.detail.value;       }
-    handleStatusFilter(event)   { this.statusFilter    = event.detail.value;       }
-    handleCategoryFilter(event) { this.categoryFilter  = event.detail.value;       }
+    get totalPages() {
+        return Math.max(1, Math.ceil(this.filteredThreats.length / PAGE_SIZE));
+    }
+
+    get hasPrevPage() { return this.currentPage > 1; }
+    get hasNextPage() { return this.currentPage < this.totalPages; }
+    get noPrevPage()  { return !this.hasPrevPage; }
+    get noNextPage()  { return !this.hasNextPage; }
+
+    get recordCountLabel() {
+        const total = this.filteredThreats.length;
+        const start = Math.min((this.currentPage - 1) * PAGE_SIZE + 1, total);
+        const end   = Math.min(this.currentPage * PAGE_SIZE, total);
+        if (total === 0) return '0 records';
+        return `${start}–${end} of ${total} record${total !== 1 ? 's' : ''} (Page ${this.currentPage} of ${this.totalPages})`;
+    }
+
+    handlePrevPage() { if (this.hasPrevPage) this.currentPage--; }
+    handleNextPage() { if (this.hasNextPage) this.currentPage++; }
+
+    _resetPage() { this.currentPage = 1; }
+
+    handleSearch(event)         { this.searchTerm     = event.detail.value; this._resetPage(); }
+    handleSeverityFilter(event) { this.severityFilter  = event.detail.value; this._resetPage(); }
+    handleStatusFilter(event)   { this.statusFilter    = event.detail.value; this._resetPage(); }
+    handleCategoryFilter(event) { this.categoryFilter  = event.detail.value; this._resetPage(); }
     handleClearFilters()        {
         this.severityFilter = '';
         this.statusFilter   = '';
         this.categoryFilter = '';
         this.searchTerm     = '';
+        this._resetPage();
     }
 
     // ─── Modal ────────────────────────────────────────────────────────────────────

@@ -25,6 +25,8 @@ const INCIDENT_COLUMNS = [
       typeAttributes: { year: 'numeric', month: 'short', day: '2-digit' } }
 ];
 
+const POLL_INTERVAL_MS = 60000; // auto-refresh every 60 seconds
+
 export default class ThreatDashboard extends LightningElement {
     @track metrics;
     @track recentThreats = [];
@@ -38,6 +40,7 @@ export default class ThreatDashboard extends LightningElement {
     _metricsWired;
     _threatsWired;
     _incidentsWired;
+    _pollTimer;
 
     @wire(getMetrics)
     wiredMetrics(result) {
@@ -70,6 +73,19 @@ export default class ThreatDashboard extends LightningElement {
             this.recentIncidents = result.data;
         } else if (result.error) {
             this.error = this._errorMsg(result.error);
+        }
+    }
+
+    // ─── Lifecycle ───────────────────────────────────────────────────────────────
+
+    connectedCallback() {
+        this._pollTimer = setInterval(() => { this._doRefresh(true); }, POLL_INTERVAL_MS);
+    }
+
+    disconnectedCallback() {
+        if (this._pollTimer) {
+            clearInterval(this._pollTimer);
+            this._pollTimer = undefined;
         }
     }
 
@@ -114,7 +130,11 @@ export default class ThreatDashboard extends LightningElement {
 
     // ─── Handlers ───────────────────────────────────────────────────────────────
 
-    async handleRefresh() {
+    handleRefresh() {
+        this._doRefresh(false);
+    }
+
+    async _doRefresh(silent) {
         this.isLoading = true;
         await Promise.all([
             refreshApex(this._metricsWired),
@@ -122,9 +142,11 @@ export default class ThreatDashboard extends LightningElement {
             refreshApex(this._incidentsWired)
         ]);
         this.isLoading = false;
-        this.dispatchEvent(new ShowToastEvent({
-            title: 'Dashboard', message: 'Data refreshed.', variant: 'success', mode: 'dismissable'
-        }));
+        if (!silent) {
+            this.dispatchEvent(new ShowToastEvent({
+                title: 'Dashboard', message: 'Data refreshed.', variant: 'success', mode: 'dismissable'
+            }));
+        }
     }
 
     _errorMsg(err) {
