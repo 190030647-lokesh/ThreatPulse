@@ -124,10 +124,8 @@ export default class IocViewer extends LightningElement {
         if (name === 'deactivate') {
             try {
                 await deactivateIOC({ iocId: row.Id });
-                this.iocs = this.iocs.map(i =>
-                    i.Id === row.Id ? { ...i, Is_Active__c: false } : i
-                );
                 this._toast('Deactivated', `IOC "${row.Value__c}" deactivated.`, 'warning');
+                await this.handleSearch(); // re-query so active filter is applied correctly
             } catch (e) {
                 this.errorMsg = this._errMsg(e);
             }
@@ -138,12 +136,10 @@ export default class IocViewer extends LightningElement {
         if (!this.selectedRows.length) return;
         try {
             await deactivateIOCList({ iocIds: this.selectedRows });
-            const deactivatedSet = new Set(this.selectedRows);
-            this.iocs = this.iocs.map(i =>
-                deactivatedSet.has(i.Id) ? { ...i, Is_Active__c: false } : i
-            );
-            this._toast('Deactivated', `${this.selectedRows.length} IOC(s) deactivated.`, 'warning');
+            const count = this.selectedRows.length;
             this.selectedRows = [];
+            this._toast('Deactivated', `${count} IOC(s) deactivated.`, 'warning');
+            await this.handleSearch(); // re-query so active filter is applied correctly
         } catch (e) {
             this.errorMsg = this._errMsg(e);
         }
