@@ -37,7 +37,8 @@ const CATEGORY_OPTIONS = [
 ];
 
 const COLUMNS = [
-    { label: 'Name',          fieldName: 'Name',             type: 'text'                               },
+    { label: 'Name',          fieldName: 'recordUrl',        type: 'url',
+      typeAttributes: { label: { fieldName: 'Name' }, target: '_self' }        },
     { label: 'Severity',      fieldName: 'Severity__c',      type: 'text'                               },
     { label: 'Category',      fieldName: 'Category__c',      type: 'text'                               },
     { label: 'Status',        fieldName: 'Status__c',        type: 'text'                               },
@@ -86,7 +87,10 @@ export default class ThreatList extends LightningElement {
     wiredThreats(result) {
         this._wiredResult = result;
         if (result.data) {
-            this.allThreats = result.data;
+            this.allThreats = result.data.map(t => ({
+                ...t,
+                recordUrl: `/lightning/r/Threat__c/${t.Id}/view`
+            }));
             this.errorMsg   = undefined;
         } else if (result.error) {
             this.errorMsg   = this._errMsg(result.error);
