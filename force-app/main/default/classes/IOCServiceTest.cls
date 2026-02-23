@@ -104,7 +104,7 @@ private class IOCServiceTest {
 
         Test.startTest();
         // activeFilter='all' returns both active and inactive matches
-        List<Indicator_of_Compromise__c> results = IOCService.searchByValue('searchable', 'all');
+        List<Indicator_of_Compromise__c> results = IOCService.searchByValue('searchable', 'all', '');
         Test.stopTest();
 
         System.assert(!results.isEmpty());
@@ -121,9 +121,9 @@ private class IOCServiceTest {
         insert new List<Indicator_of_Compromise__c>{ active, inactive };
 
         Test.startTest();
-        List<Indicator_of_Compromise__c> activeOnly   = IOCService.searchByValue('10.20.30', 'true');
-        List<Indicator_of_Compromise__c> inactiveOnly = IOCService.searchByValue('10.20.30', 'false');
-        List<Indicator_of_Compromise__c> allResults   = IOCService.searchByValue('10.20.30', 'all');
+        List<Indicator_of_Compromise__c> activeOnly   = IOCService.searchByValue('10.20.30', 'true', '');
+        List<Indicator_of_Compromise__c> inactiveOnly = IOCService.searchByValue('10.20.30', 'false', '');
+        List<Indicator_of_Compromise__c> allResults   = IOCService.searchByValue('10.20.30', 'all', '');
         Test.stopTest();
 
         for (Indicator_of_Compromise__c ioc : activeOnly)   { System.assertEquals(true,  ioc.Is_Active__c); }
@@ -177,7 +177,7 @@ private class IOCServiceTest {
         insert new List<Indicator_of_Compromise__c>{ active, inactive };
 
         Test.startTest();
-        List<Indicator_of_Compromise__c> results = IOCService.getIOCsFiltered('true');
+        List<Indicator_of_Compromise__c> results = IOCService.getIOCsFiltered('true', '');
         Test.stopTest();
 
         for (Indicator_of_Compromise__c ioc : results) {
@@ -196,7 +196,7 @@ private class IOCServiceTest {
         insert new List<Indicator_of_Compromise__c>{ active, inactive };
 
         Test.startTest();
-        List<Indicator_of_Compromise__c> results = IOCService.getIOCsFiltered('false');
+        List<Indicator_of_Compromise__c> results = IOCService.getIOCsFiltered('false', '');
         Test.stopTest();
 
         for (Indicator_of_Compromise__c ioc : results) {
@@ -215,8 +215,8 @@ private class IOCServiceTest {
         insert new List<Indicator_of_Compromise__c>{ active, inactive };
 
         Test.startTest();
-        List<Indicator_of_Compromise__c> all    = IOCService.getIOCsFiltered('all');
-        List<Indicator_of_Compromise__c> active2 = IOCService.getIOCsFiltered('true');
+        List<Indicator_of_Compromise__c> all    = IOCService.getIOCsFiltered('all', '');
+        List<Indicator_of_Compromise__c> active2 = IOCService.getIOCsFiltered('true', '');
         Test.stopTest();
 
         System.assert(all.size() >= active2.size(), '"Show All" should return >= active-only results');

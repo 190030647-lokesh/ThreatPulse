@@ -62,17 +62,20 @@ export default class IocViewer extends LightningElement {
 
     // Stores the full wire provisioned object so we can call refreshApex
     _wiredResult;
+    _cachedData;     // retains last successful result so UI shows stale data instead of spinner during refresh
     _subscription;
 
     // â”€â”€â”€ @wire â€” reactive, cacheable, auto-refreshes via refreshApex â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-    @wire(searchIOCs, { searchTerm: '$searchTerm', activeFilter: '$activeFilter' })
+    // Bug 7 fix: typeFilter is now a reactive wire param — wire re-fires on type change (server-side)
+    @wire(searchIOCs, { searchTerm: '$searchTerm', activeFilter: '$activeFilter', typeFilter: '$typeFilter' })
     wiredIOCs(result) {
         this._wiredResult = result;
-        if (result.error) {
+        if (result.data) {
+            this._cachedData = result.data;  // cache for stale-while-revalidate pattern
+            this.errorMsg    = undefined;
+        } else if (result.error) {
             this.errorMsg = this._errMsg(result.error);
-        } else {
-            this.errorMsg = undefined;
         }
     }
 
@@ -104,20 +107,16 @@ export default class IocViewer extends LightningElement {
 
     // â”€â”€â”€ Computed â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-    // Apply client-side type filter on top of server-supplied data
+    // Bug 7 fix: typeFilter is now server-side via wire — no client filtering needed
+    // Bug 4 fix: fall back to _cachedData during refreshApex so no spinner flash on background refresh
     get iocs() {
-        const data = this._wiredResult && this._wiredResult.data;
-        if (!data) return [];
-        if (this.typeFilter) {
-            return data.filter(r => r.IOC_Type__c === this.typeFilter);
-        }
-        return data;
+        return (this._wiredResult && this._wiredResult.data) || this._cachedData || [];
     }
 
     get isLoading() {
-        // Wire is loading when the result object exists but neither data nor error are populated yet
+        // Bug 4 fix: only spin on initial load; show stale data during background refreshes
         return !this._wiredResult ||
-               (!this._wiredResult.data && !this._wiredResult.error);
+               (!this._wiredResult.data && !this._wiredResult.error && !this._cachedData);
     }
 
     get noResults() {
@@ -148,9 +147,12 @@ export default class IocViewer extends LightningElement {
         refreshApex(this._wiredResult);
     }
 
-    // Explicit search button / onsearch (X-clear) â€” wire fires automatically on
-    // searchTerm/activeFilter changes, but force-refresh here for manual trigger
-    handleSearch() {
+    // Bug 1 fix: onsearch fires when user clicks X (event.detail.value = '') — must update searchTerm
+    // onclick from Search button has no useful detail — only refreshes manually
+    handleSearch(event) {
+        if (event && event.detail && event.detail.value !== undefined) {
+            this.searchTerm = event.detail.value;  // X-clear sets this to ''
+        }
         refreshApex(this._wiredResult);
     }
 

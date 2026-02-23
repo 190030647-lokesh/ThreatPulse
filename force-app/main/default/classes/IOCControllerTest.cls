@@ -38,7 +38,7 @@ private class IOCControllerTest {
     @IsTest
     static void testSearchIOCsBlankTermActiveFilter() {
         Test.startTest();
-        List<Indicator_of_Compromise__c> result = IOCController.searchIOCs('', 'true');
+        List<Indicator_of_Compromise__c> result = IOCController.searchIOCs('', 'true', '');
         Test.stopTest();
         System.assert(result.size() >= 1, 'Should return active IOCs');
         for (Indicator_of_Compromise__c ioc : result) {
@@ -49,7 +49,7 @@ private class IOCControllerTest {
     @IsTest
     static void testSearchIOCsBlankTermInactiveFilter() {
         Test.startTest();
-        List<Indicator_of_Compromise__c> result = IOCController.searchIOCs('', 'false');
+        List<Indicator_of_Compromise__c> result = IOCController.searchIOCs('', 'false', '');
         Test.stopTest();
         System.assert(result.size() >= 1, 'Should return inactive IOCs');
         for (Indicator_of_Compromise__c ioc : result) {
@@ -60,7 +60,7 @@ private class IOCControllerTest {
     @IsTest
     static void testSearchIOCsBlankTermAllFilter() {
         Test.startTest();
-        List<Indicator_of_Compromise__c> result = IOCController.searchIOCs('', 'all');
+        List<Indicator_of_Compromise__c> result = IOCController.searchIOCs('', 'all', '');
         Test.stopTest();
         System.assert(result.size() >= 2, '"All" filter should return both active and inactive IOCs');
     }
@@ -70,7 +70,7 @@ private class IOCControllerTest {
     @IsTest
     static void testSearchIOCsByValueActiveOnly() {
         Test.startTest();
-        List<Indicator_of_Compromise__c> result = IOCController.searchIOCs('192.168', 'true');
+        List<Indicator_of_Compromise__c> result = IOCController.searchIOCs('192.168', 'true', '');
         Test.stopTest();
         System.assert(result.size() >= 1, 'Should find active IP IOC by value fragment');
         for (Indicator_of_Compromise__c ioc : result) {
@@ -81,7 +81,7 @@ private class IOCControllerTest {
     @IsTest
     static void testSearchIOCsByValueInactiveOnly() {
         Test.startTest();
-        List<Indicator_of_Compromise__c> result = IOCController.searchIOCs('inactive-ctrl', 'false');
+        List<Indicator_of_Compromise__c> result = IOCController.searchIOCs('inactive-ctrl', 'false', '');
         Test.stopTest();
         System.assert(!result.isEmpty(), 'Should find inactive domain IOC by value fragment');
         for (Indicator_of_Compromise__c ioc : result) {
@@ -92,7 +92,7 @@ private class IOCControllerTest {
     @IsTest
     static void testSearchIOCsByValueAllFilter() {
         Test.startTest();
-        List<Indicator_of_Compromise__c> result = IOCController.searchIOCs('example', 'all');
+        List<Indicator_of_Compromise__c> result = IOCController.searchIOCs('example', 'all', '');
         Test.stopTest();
         // Should find at least the inactive domain (value contains 'example')
         System.assert(!result.isEmpty(), 'All filter with search term should find matching IOCs');

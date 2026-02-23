@@ -26,9 +26,11 @@ public with sharing class IOCService {
     }
 
     // Returns IOCs filtered by active status — used when search term is blank
-    public static List<Indicator_of_Compromise__c> getIOCsFiltered(String activeFilter) {
+    // Bug 7 fix: accepts typeFilter for server-side IOC type filtering
+    public static List<Indicator_of_Compromise__c> getIOCsFiltered(String activeFilter, String typeFilter) {
+        List<Indicator_of_Compromise__c> results;
         if (activeFilter == 'false') {
-            return [
+            results = [
                 SELECT Id, Name, IOC_Type__c, Value__c, Threat__c, Threat__r.Name,
                        First_Seen__c, Last_Seen__c, Confidence__c, Is_Active__c
                 FROM Indicator_of_Compromise__c
@@ -38,7 +40,7 @@ public with sharing class IOCService {
                 LIMIT 1000
             ];
         } else if (activeFilter == 'all') {
-            return [
+            results = [
                 SELECT Id, Name, IOC_Type__c, Value__c, Threat__c, Threat__r.Name,
                        First_Seen__c, Last_Seen__c, Confidence__c, Is_Active__c
                 FROM Indicator_of_Compromise__c
@@ -46,41 +48,63 @@ public with sharing class IOCService {
                 ORDER BY Last_Seen__c DESC NULLS LAST
                 LIMIT 1000
             ];
+        } else {
+            // Default: active only
+            results = getActiveIOCs();
         }
-        // Default: active only
-        return getActiveIOCs();
+        // Apply IOC type filter in memory to avoid dynamic SOQL
+        if (String.isNotBlank(typeFilter)) {
+            List<Indicator_of_Compromise__c> typed = new List<Indicator_of_Compromise__c>();
+            for (Indicator_of_Compromise__c ioc : results) {
+                if (ioc.IOC_Type__c == typeFilter) typed.add(ioc);
+            }
+            return typed;
+        }
+        return results;
     }
 
-    public static List<Indicator_of_Compromise__c> searchByValue(String searchVal, String activeFilter) {
+    // Bug 6 fix: LIMIT raised to 1000 for consistency with getIOCsFiltered
+    // Bug 7 fix: typeFilter param added for server-side IOC type filtering
+    public static List<Indicator_of_Compromise__c> searchByValue(String searchVal, String activeFilter, String typeFilter) {
         String likeVal = '%' + searchVal + '%';
+        List<Indicator_of_Compromise__c> results;
         if (activeFilter == 'true') {
-            return [
+            results = [
                 SELECT Id, Name, IOC_Type__c, Value__c, Threat__c, Threat__r.Name,
                        Is_Active__c, Confidence__c, First_Seen__c, Last_Seen__c
                 FROM Indicator_of_Compromise__c
                 WHERE Value__c LIKE :likeVal AND Is_Active__c = true
                 WITH SECURITY_ENFORCED
-                LIMIT 200
+                LIMIT 1000
             ];
         } else if (activeFilter == 'false') {
-            return [
+            results = [
                 SELECT Id, Name, IOC_Type__c, Value__c, Threat__c, Threat__r.Name,
                        Is_Active__c, Confidence__c, First_Seen__c, Last_Seen__c
                 FROM Indicator_of_Compromise__c
                 WHERE Value__c LIKE :likeVal AND Is_Active__c = false
                 WITH SECURITY_ENFORCED
-                LIMIT 200
+                LIMIT 1000
             ];
         } else {
-            return [
+            results = [
                 SELECT Id, Name, IOC_Type__c, Value__c, Threat__c, Threat__r.Name,
                        Is_Active__c, Confidence__c, First_Seen__c, Last_Seen__c
                 FROM Indicator_of_Compromise__c
                 WHERE Value__c LIKE :likeVal
                 WITH SECURITY_ENFORCED
-                LIMIT 200
+                LIMIT 1000
             ];
         }
+        // Apply IOC type filter in memory
+        if (String.isNotBlank(typeFilter)) {
+            List<Indicator_of_Compromise__c> typed = new List<Indicator_of_Compromise__c>();
+            for (Indicator_of_Compromise__c ioc : results) {
+                if (ioc.IOC_Type__c == typeFilter) typed.add(ioc);
+            }
+            return typed;
+        }
+        return results;
     }
 
     // ─── DML Methods ────────────────────────────────────────────────────────────

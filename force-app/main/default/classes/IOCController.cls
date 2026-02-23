@@ -1,14 +1,15 @@
 public with sharing class IOCController {
 
     // cacheable=true enables @wire reactive binding in LWC for automatic cache invalidation
+    // Bug 7 fix: typeFilter added for server-side IOC type filtering
     @AuraEnabled(cacheable=true)
-    public static List<Indicator_of_Compromise__c> searchIOCs(String searchTerm, String activeFilter) {
+    public static List<Indicator_of_Compromise__c> searchIOCs(String searchTerm, String activeFilter, String typeFilter) {
         try {
             if (String.isBlank(searchTerm)) {
-                return IOCService.getIOCsFiltered(activeFilter);
+                return IOCService.getIOCsFiltered(activeFilter, typeFilter);
             }
-            // activeFilter is now applied server-side — no more client-side active filtering
-            return IOCService.searchByValue(searchTerm, activeFilter);
+            // activeFilter and typeFilter are applied server-side
+            return IOCService.searchByValue(searchTerm, activeFilter, typeFilter);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
@@ -39,9 +40,10 @@ public with sharing class IOCController {
                 toUpdate.add(new Indicator_of_Compromise__c(Id = iocId, Is_Active__c = false));
             }
             update toUpdate;
+            // Bug 5 fix: use 'BULK' sentinel instead of null so consumers can distinguish bulk vs single
             EventBus.publish(new ThreatPulse_Event__e(
                 Event_Type__c = 'IOC_DEACTIVATED',
-                Record_Id__c  = null,
+                Record_Id__c  = 'BULK',
                 Message__c    = iocIds.size() + ' IOC(s) deactivated'
             ));
         } catch (AuraHandledException ahe) {

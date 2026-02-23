@@ -111,6 +111,11 @@ export default class IncidentTracker extends LightningElement {
             this.resolutionNotes      = '';
             this.showResolveModal     = true;
         } else if (name === 'close') {
+            // Bug 3 fix: closing requires prior resolution (validation rule enforces Resolution_Notes)
+            if (row.Status__c !== 'Resolved') {
+                this.errorMsg = `"${row.Name}" must be resolved before closing. Use the Resolve action first.`;
+                return;
+            }
             try {
                 await closeIncident({ incidentId: row.Id });
                 await refreshApex(this._wiredResult);
