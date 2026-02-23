@@ -60,8 +60,8 @@
             <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2 slds-m-bottom_small">
                 <lightning-card title="Threats by Severity" icon-name="utility:shield">
                     <div class="slds-m-around_medium">
-                        <template lwc:for={metrics.bySeverity} lwc:for-item="row">
-                            <div lwc:key={row.label} class="slds-grid slds-grid_vertical-align-center slds-m-bottom_x-small">
+                        <template for:each={metrics.bySeverity} for:item="row">
+                            <div key={row.label} class="slds-grid slds-grid_vertical-align-center slds-m-bottom_x-small">
                                 <div class="slds-col slds-size_3-of-12">
                                     <span class="slds-truncate bar-label">{row.label}</span>
                                 </div>
@@ -86,8 +86,8 @@
             <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2 slds-m-bottom_small">
                 <lightning-card title="Threats by Category" icon-name="utility:category">
                     <div class="slds-m-around_medium">
-                        <template lwc:for={metrics.byCategory} lwc:for-item="row">
-                            <div lwc:key={row.label} class="slds-grid slds-grid_vertical-align-center slds-m-bottom_x-small">
+                        <template for:each={metrics.byCategory} for:item="row">
+                            <div key={row.label} class="slds-grid slds-grid_vertical-align-center slds-m-bottom_x-small">
                                 <div class="slds-col slds-size_3-of-12">
                                     <span class="slds-truncate bar-label">{row.label}</span>
                                 </div>
@@ -144,8 +144,8 @@
         </template>
     </template>
 
-    <!-- Bug 3 fix: show overlay spinner on Refresh when metrics already loaded -->
-    <template lwc:if={showSpinner}>
+    <!-- Overlay spinner on Refresh — only when metrics already loaded, prevents double spinner on initial load -->
+    <template lwc:if={showRefreshSpinner}>
         <div class="slds-spinner_container">
             <lightning-spinner alternative-text="Refreshing..." size="medium"></lightning-spinner>
         </div>

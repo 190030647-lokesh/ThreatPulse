@@ -121,7 +121,9 @@ export default class ThreatDashboard extends LightningElement {
     // Inverse getters for lwc:if (templates don't support ! negation)
     get noSeverityData() { return !this.hasSeverityData; }
     get noCategoryData() { return !this.hasCategoryData; }
-    get showSpinner()    { return this.isLoading; }
+    get showSpinner()        { return this.isLoading; }
+    // Only show overlay spinner during a refresh (metrics already loaded), not on initial load
+    get showRefreshSpinner() { return this.isLoading && !!this.metrics; }
 
     // ─── Enrich metrics with bar chart widths ────────────────────────────────────
 
