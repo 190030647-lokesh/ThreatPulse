@@ -1,12 +1,14 @@
 public with sharing class IOCController {
 
-    @AuraEnabled
+    // cacheable=true enables @wire reactive binding in LWC for automatic cache invalidation
+    @AuraEnabled(cacheable=true)
     public static List<Indicator_of_Compromise__c> searchIOCs(String searchTerm, String activeFilter) {
         try {
             if (String.isBlank(searchTerm)) {
                 return IOCService.getIOCsFiltered(activeFilter);
             }
-            return IOCService.searchByValue(searchTerm);
+            // activeFilter is now applied server-side — no more client-side active filtering
+            return IOCService.searchByValue(searchTerm, activeFilter);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
@@ -16,6 +18,11 @@ public with sharing class IOCController {
     public static void deactivateIOC(Id iocId) {
         try {
             IOCService.deactivateIOC(iocId);
+            EventBus.publish(new ThreatPulse_Event__e(
+                Event_Type__c = 'IOC_DEACTIVATED',
+                Record_Id__c  = String.valueOf(iocId),
+                Message__c    = 'IOC deactivated'
+            ));
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
@@ -32,6 +39,11 @@ public with sharing class IOCController {
                 toUpdate.add(new Indicator_of_Compromise__c(Id = iocId, Is_Active__c = false));
             }
             update toUpdate;
+            EventBus.publish(new ThreatPulse_Event__e(
+                Event_Type__c = 'IOC_DEACTIVATED',
+                Record_Id__c  = null,
+                Message__c    = iocIds.size() + ' IOC(s) deactivated'
+            ));
         } catch (AuraHandledException ahe) {
             throw ahe;
         } catch (Exception e) {

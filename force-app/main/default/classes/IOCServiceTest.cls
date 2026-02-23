@@ -103,11 +103,33 @@ private class IOCServiceTest {
         insert makeIOC(t.Id, 'Domain', 'searchable.evil.com');
 
         Test.startTest();
-        List<Indicator_of_Compromise__c> results = IOCService.searchByValue('searchable');
+        // activeFilter='all' returns both active and inactive matches
+        List<Indicator_of_Compromise__c> results = IOCService.searchByValue('searchable', 'all');
         Test.stopTest();
 
         System.assert(!results.isEmpty());
         System.assert(results[0].Value__c.contains('searchable'));
+    }
+
+    @IsTest
+    static void testSearchByValueActiveFilter() {
+        Threat__c t = makeTestThreat();
+        insert t;
+        Indicator_of_Compromise__c active   = makeIOC(t.Id, 'IP Address', '10.20.30.40');
+        Indicator_of_Compromise__c inactive = makeIOC(t.Id, 'IP Address', '10.20.30.41');
+        inactive.Is_Active__c = false;
+        insert new List<Indicator_of_Compromise__c>{ active, inactive };
+
+        Test.startTest();
+        List<Indicator_of_Compromise__c> activeOnly   = IOCService.searchByValue('10.20.30', 'true');
+        List<Indicator_of_Compromise__c> inactiveOnly = IOCService.searchByValue('10.20.30', 'false');
+        List<Indicator_of_Compromise__c> allResults   = IOCService.searchByValue('10.20.30', 'all');
+        Test.stopTest();
+
+        for (Indicator_of_Compromise__c ioc : activeOnly)   { System.assertEquals(true,  ioc.Is_Active__c); }
+        for (Indicator_of_Compromise__c ioc : inactiveOnly) { System.assertEquals(false, ioc.Is_Active__c); }
+        System.assert(allResults.size() >= activeOnly.size() + inactiveOnly.size(),
+            'All filter should return at least the union of active and inactive results');
     }
 
     @IsTest

@@ -1,9 +1,12 @@
 import { LightningElement, wire, track } from 'lwc';
 import { refreshApex } from '@salesforce/apex';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { subscribe, unsubscribe, onError } from 'lightning/empApi';
 import getMetrics from '@salesforce/apex/DashboardMetricsController.getMetrics';
 import getRecentThreats from '@salesforce/apex/DashboardMetricsController.getRecentThreats';
 import getRecentIncidents from '@salesforce/apex/DashboardMetricsController.getRecentIncidents';
+
+const DASHBOARD_CHANNEL = '/event/ThreatPulse_Event__e';
 
 const THREAT_COLUMNS = [
     { label: 'Name',          fieldName: 'Name',             type: 'text'    },
@@ -42,6 +45,7 @@ export default class ThreatDashboard extends LightningElement {
     _incidentsWired;
     _pollTimer;
     _isRefreshing = false;
+    _subscription;
 
     @wire(getMetrics)
     wiredMetrics(result) {
@@ -81,12 +85,26 @@ export default class ThreatDashboard extends LightningElement {
 
     connectedCallback() {
         this._pollTimer = setInterval(() => { this._doRefresh(true); }, POLL_INTERVAL_MS);
+        // Subscribe to Platform Events for immediate push (complements polling)
+        onError(error => {
+            console.error('[ThreatDashboard] EmpApi error:', JSON.stringify(error));
+        });
+        subscribe(DASHBOARD_CHANNEL, -1, (message) => {
+            // Any ThreatPulse mutation warrants a silent dashboard refresh
+            this._doRefresh(true);
+        }).then(sub => {
+            this._subscription = sub;
+        });
     }
 
     disconnectedCallback() {
         if (this._pollTimer) {
             clearInterval(this._pollTimer);
             this._pollTimer = undefined;
+        }
+        if (this._subscription) {
+            unsubscribe(this._subscription, () => {});
+            this._subscription = undefined;
         }
     }
 

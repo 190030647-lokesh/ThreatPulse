@@ -51,16 +51,36 @@ public with sharing class IOCService {
         return getActiveIOCs();
     }
 
-    public static List<Indicator_of_Compromise__c> searchByValue(String searchVal) {
+    public static List<Indicator_of_Compromise__c> searchByValue(String searchVal, String activeFilter) {
         String likeVal = '%' + searchVal + '%';
-        return [
-            SELECT Id, Name, IOC_Type__c, Value__c, Threat__c, Threat__r.Name,
-                   Is_Active__c, Confidence__c, First_Seen__c, Last_Seen__c
-            FROM Indicator_of_Compromise__c
-            WHERE Value__c LIKE :likeVal
-            WITH SECURITY_ENFORCED
-            LIMIT 200
-        ];
+        if (activeFilter == 'true') {
+            return [
+                SELECT Id, Name, IOC_Type__c, Value__c, Threat__c, Threat__r.Name,
+                       Is_Active__c, Confidence__c, First_Seen__c, Last_Seen__c
+                FROM Indicator_of_Compromise__c
+                WHERE Value__c LIKE :likeVal AND Is_Active__c = true
+                WITH SECURITY_ENFORCED
+                LIMIT 200
+            ];
+        } else if (activeFilter == 'false') {
+            return [
+                SELECT Id, Name, IOC_Type__c, Value__c, Threat__c, Threat__r.Name,
+                       Is_Active__c, Confidence__c, First_Seen__c, Last_Seen__c
+                FROM Indicator_of_Compromise__c
+                WHERE Value__c LIKE :likeVal AND Is_Active__c = false
+                WITH SECURITY_ENFORCED
+                LIMIT 200
+            ];
+        } else {
+            return [
+                SELECT Id, Name, IOC_Type__c, Value__c, Threat__c, Threat__r.Name,
+                       Is_Active__c, Confidence__c, First_Seen__c, Last_Seen__c
+                FROM Indicator_of_Compromise__c
+                WHERE Value__c LIKE :likeVal
+                WITH SECURITY_ENFORCED
+                LIMIT 200
+            ];
+        }
     }
 
     // ─── DML Methods ────────────────────────────────────────────────────────────

@@ -1,10 +1,13 @@
 import { LightningElement, wire, track } from 'lwc';
 import { refreshApex } from '@salesforce/apex';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { subscribe, unsubscribe, onError } from 'lightning/empApi';
 import getIncidents from '@salesforce/apex/IncidentController.getIncidents';
 import assignToMe from '@salesforce/apex/IncidentController.assignToMe';
 import resolveIncident from '@salesforce/apex/IncidentController.resolveIncident';
 import closeIncident from '@salesforce/apex/IncidentController.closeIncident';
+
+const INCIDENT_CHANNEL = '/event/ThreatPulse_Event__e';
 
 const COLUMNS = [
     { label: 'Incident #',  fieldName: 'Name',             type: 'text'                                 },
@@ -36,6 +39,7 @@ export default class IncidentTracker extends LightningElement {
     @track activeTab             = 'All';
     columns   = COLUMNS;
     _wiredResult;
+    _subscription;
 
     @wire(getIncidents)
     wiredIncidents(result) {
@@ -45,6 +49,27 @@ export default class IncidentTracker extends LightningElement {
             this.errorMsg     = undefined;
         } else if (result.error) {
             this.errorMsg = this._errMsg(result.error);
+        }
+    }
+
+    connectedCallback() {
+        onError(error => {
+            console.error('[IncidentTracker] EmpApi error:', JSON.stringify(error));
+        });
+        subscribe(INCIDENT_CHANNEL, -1, (message) => {
+            const evtType = message.data && message.data.payload && message.data.payload.Event_Type__c;
+            if (evtType && (evtType.startsWith('INCIDENT_') || evtType.startsWith('THREAT_'))) {
+                refreshApex(this._wiredResult);
+            }
+        }).then(sub => {
+            this._subscription = sub;
+        });
+    }
+
+    disconnectedCallback() {
+        if (this._subscription) {
+            unsubscribe(this._subscription, () => {});
+            this._subscription = undefined;
         }
     }
 

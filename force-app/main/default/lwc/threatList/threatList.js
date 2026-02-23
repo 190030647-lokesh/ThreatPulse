@@ -1,10 +1,13 @@
 import { LightningElement, wire, track } from 'lwc';
 import { refreshApex } from '@salesforce/apex';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { subscribe, unsubscribe, onError } from 'lightning/empApi';
 import getThreats from '@salesforce/apex/ThreatController.getThreats';
 import createThreat from '@salesforce/apex/ThreatController.createThreat';
 import updateThreatStatus from '@salesforce/apex/ThreatController.updateThreatStatus';
 import deleteThreat from '@salesforce/apex/ThreatController.deleteThreat';
+
+const THREAT_CHANNEL = '/event/ThreatPulse_Event__e';
 
 const SEVERITY_OPTIONS = [
     { label: 'P1 - Critical', value: 'P1 - Critical' },
@@ -75,6 +78,7 @@ export default class ThreatList extends LightningElement {
     columns          = COLUMNS;
 
     _wiredResult;
+    _subscription;
 
     get modalTitle() { return 'New Threat'; }
 
@@ -86,6 +90,31 @@ export default class ThreatList extends LightningElement {
             this.errorMsg   = undefined;
         } else if (result.error) {
             this.errorMsg   = this._errMsg(result.error);
+        }
+    }
+
+    // ─── Lifecycle ───────────────────────────────────────────────────────────────
+
+    connectedCallback() {
+        onError(error => {
+            console.error('[ThreatList] EmpApi error:', JSON.stringify(error));
+        });
+        subscribe(THREAT_CHANNEL, -1, (message) => {
+            const evtType = message.data && message.data.payload && message.data.payload.Event_Type__c;
+            if (evtType && evtType.startsWith('THREAT_')) {
+                // Another user mutated threat data — refresh and reset to page 1
+                refreshApex(this._wiredResult);
+                this._resetPage();
+            }
+        }).then(sub => {
+            this._subscription = sub;
+        });
+    }
+
+    disconnectedCallback() {
+        if (this._subscription) {
+            unsubscribe(this._subscription, () => {});
+            this._subscription = undefined;
         }
     }
 
