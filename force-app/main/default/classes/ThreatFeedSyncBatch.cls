@@ -1,4 +1,4 @@
-public without sharing class ThreatFeedSyncBatch
+public with sharing class ThreatFeedSyncBatch
     implements Database.Batchable<SObject>, Database.AllowsCallouts, Database.Stateful {
 
     // ─── State ──────────────────────────────────────────────────────────────────
@@ -32,7 +32,13 @@ public without sharing class ThreatFeedSyncBatch
                 errors.addAll(parsed.errors);
 
                 if (!parsed.threats.isEmpty()) {
-                    insert parsed.threats;
+                    List<Database.SaveResult> sr = Database.insert(parsed.threats, false);
+                    for (Integer i = sr.size() - 1; i >= 0; i--) {
+                        if (!sr[i].isSuccess()) {
+                            errors.add(feed.Name + ' threat insert error: ' + sr[i].getErrors()[0].getMessage());
+                            parsed.threats.remove(i);
+                        }
+                    }
                     threatsSaved += parsed.threats.size();
 
                     // Link each IOC to its correct parent threat using the index map

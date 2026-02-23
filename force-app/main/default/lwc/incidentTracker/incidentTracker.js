@@ -33,8 +33,7 @@ export default class IncidentTracker extends LightningElement {
     @track selectedIncidentName  = '';
     @track resolutionNotes       = '';
     @track errorMsg;
-
-    activeTab = 'Open';
+    @track activeTab             = 'All';
     columns   = COLUMNS;
     _wiredResult;
 

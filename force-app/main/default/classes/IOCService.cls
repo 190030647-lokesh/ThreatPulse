@@ -21,6 +21,7 @@ public with sharing class IOCService {
             WHERE Is_Active__c = true
             WITH SECURITY_ENFORCED
             ORDER BY Last_Seen__c DESC
+            LIMIT 1000
         ];
     }
 

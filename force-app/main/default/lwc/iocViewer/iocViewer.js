@@ -54,6 +54,10 @@ export default class IocViewer extends LightningElement {
     activeOptions = ACTIVE_OPTIONS;
     columns       = COLUMNS;
 
+    connectedCallback() {
+        this.handleSearch();
+    }
+
     // ─── Computed ───────────────────────────────────────────────────────────────
 
     get noResults() {

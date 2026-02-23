@@ -30,6 +30,7 @@ export default class ThreatDashboard extends LightningElement {
     @track recentThreats = [];
     @track recentIncidents = [];
     @track error;
+    @track isLoading = true;
 
     threatColumns    = THREAT_COLUMNS;
     incidentColumns  = INCIDENT_COLUMNS;
@@ -42,11 +43,13 @@ export default class ThreatDashboard extends LightningElement {
     wiredMetrics(result) {
         this._metricsWired = result;
         if (result.data) {
-            this.error   = undefined;
-            this.metrics = this._enrichMetrics(result.data);
+            this.error     = undefined;
+            this.metrics   = this._enrichMetrics(result.data);
+            this.isLoading = false;
         } else if (result.error) {
-            this.error   = this._errorMsg(result.error);
-            this.metrics = undefined;
+            this.error     = this._errorMsg(result.error);
+            this.metrics   = undefined;
+            this.isLoading = false;
         }
     }
 
@@ -55,6 +58,8 @@ export default class ThreatDashboard extends LightningElement {
         this._threatsWired = result;
         if (result.data) {
             this.recentThreats = result.data;
+        } else if (result.error) {
+            this.error = this._errorMsg(result.error);
         }
     }
 
@@ -63,6 +68,8 @@ export default class ThreatDashboard extends LightningElement {
         this._incidentsWired = result;
         if (result.data) {
             this.recentIncidents = result.data;
+        } else if (result.error) {
+            this.error = this._errorMsg(result.error);
         }
     }
 
@@ -79,7 +86,7 @@ export default class ThreatDashboard extends LightningElement {
     // Inverse getters for lwc:if (templates don't support ! negation)
     get noSeverityData() { return !this.hasSeverityData; }
     get noCategoryData() { return !this.hasCategoryData; }
-    get showSpinner()    { return !this.error; }
+    get showSpinner()    { return this.isLoading; }
 
     // ─── Enrich metrics with bar chart widths ────────────────────────────────────
 
@@ -107,12 +114,16 @@ export default class ThreatDashboard extends LightningElement {
 
     // ─── Handlers ───────────────────────────────────────────────────────────────
 
-    handleRefresh() {
-        refreshApex(this._metricsWired);
-        refreshApex(this._threatsWired);
-        refreshApex(this._incidentsWired);
+    async handleRefresh() {
+        this.isLoading = true;
+        await Promise.all([
+            refreshApex(this._metricsWired),
+            refreshApex(this._threatsWired),
+            refreshApex(this._incidentsWired)
+        ]);
+        this.isLoading = false;
         this.dispatchEvent(new ShowToastEvent({
-            title: 'Dashboard', message: 'Refreshing data…', variant: 'info', mode: 'dismissable'
+            title: 'Dashboard', message: 'Data refreshed.', variant: 'success', mode: 'dismissable'
         }));
     }
 

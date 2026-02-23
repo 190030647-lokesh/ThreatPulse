@@ -4,10 +4,12 @@
         <!-- Filter Tabs -->
         <div class="slds-m-around_small">
             <lightning-tabset active-tab-value={activeTab} onselect={handleTabChange}>
+                <lightning-tab label="All" value="All"></lightning-tab>
                 <lightning-tab label="Open" value="Open"></lightning-tab>
                 <lightning-tab label="In Progress" value="In Progress"></lightning-tab>
+                <lightning-tab label="Contained" value="Contained"></lightning-tab>
                 <lightning-tab label="Resolved" value="Resolved"></lightning-tab>
-                <lightning-tab label="All" value="All"></lightning-tab>
+                <lightning-tab label="Closed" value="Closed"></lightning-tab>
             </lightning-tabset>
         </div>
 

@@ -61,11 +61,11 @@ export default class ThreatList extends LightningElement {
     @track showModal     = false;
     @track modalData     = {};
 
-    severityFilter  = '';
-    statusFilter    = '';
-    categoryFilter  = '';
-    searchTerm      = '';
-    rowOffset       = 0;
+    @track severityFilter  = '';
+    @track statusFilter    = '';
+    @track categoryFilter  = '';
+    @track searchTerm      = '';
+    rowOffset              = 0;
 
     severityOptions  = SEVERITY_OPTIONS;
     statusOptions    = STATUS_OPTIONS;
@@ -105,7 +105,7 @@ export default class ThreatList extends LightningElement {
         return `${count} record${count !== 1 ? 's' : ''}`;
     }
 
-    handleSearch(event)         { this.searchTerm     = event.target.value;        }
+    handleSearch(event)         { this.searchTerm     = event.detail.value;        }
     handleSeverityFilter(event) { this.severityFilter  = event.detail.value;       }
     handleStatusFilter(event)   { this.statusFilter    = event.detail.value;       }
     handleCategoryFilter(event) { this.categoryFilter  = event.detail.value;       }

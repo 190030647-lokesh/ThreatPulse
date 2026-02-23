@@ -67,9 +67,15 @@ public with sharing class ThreatFeedParser {
             for (Object obj : threatObjs) {
                 Map<String, Object> t = (Map<String, Object>) obj;
 
+                String tName = (String) t.get('name');
+                String tSev  = (String) t.get('severity');
+                if (String.isBlank(tName) || String.isBlank(tSev)) {
+                    result.errors.add('Skipped threat with missing name or severity');
+                    continue;
+                }
                 Threat__c threat = new Threat__c(
-                    Name             = (String)  t.get('name'),
-                    Severity__c      = (String)  t.get('severity'),
+                    Name             = tName,
+                    Severity__c      = tSev,
                     Category__c      = (String)  t.get('category'),
                     Source__c        = (String)  t.get('source'),
                     Status__c        = 'New',
