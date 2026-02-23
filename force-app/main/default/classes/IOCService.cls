@@ -25,6 +25,32 @@ public with sharing class IOCService {
         ];
     }
 
+    // Returns IOCs filtered by active status — used when search term is blank
+    public static List<Indicator_of_Compromise__c> getIOCsFiltered(String activeFilter) {
+        if (activeFilter == 'false') {
+            return [
+                SELECT Id, Name, IOC_Type__c, Value__c, Threat__c, Threat__r.Name,
+                       First_Seen__c, Last_Seen__c, Confidence__c, Is_Active__c
+                FROM Indicator_of_Compromise__c
+                WHERE Is_Active__c = false
+                WITH SECURITY_ENFORCED
+                ORDER BY Last_Seen__c DESC NULLS LAST
+                LIMIT 1000
+            ];
+        } else if (activeFilter == 'all') {
+            return [
+                SELECT Id, Name, IOC_Type__c, Value__c, Threat__c, Threat__r.Name,
+                       First_Seen__c, Last_Seen__c, Confidence__c, Is_Active__c
+                FROM Indicator_of_Compromise__c
+                WITH SECURITY_ENFORCED
+                ORDER BY Last_Seen__c DESC NULLS LAST
+                LIMIT 1000
+            ];
+        }
+        // Default: active only
+        return getActiveIOCs();
+    }
+
     public static List<Indicator_of_Compromise__c> searchByValue(String searchVal) {
         String likeVal = '%' + searchVal + '%';
         return [

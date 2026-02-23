@@ -122,7 +122,7 @@ public with sharing class IncidentService {
                 Threat__c relatedThreat = (Threat__c) incident.getSObject('Threat__r');
                 if (relatedThreat != null && relatedThreat.Detected_Date__c != null) {
                     Long ms = incident.Detected_Date__c.getTime() - relatedThreat.Detected_Date__c.getTime();
-                    return ms >= 0 ? ms / 3600000 : 0;
+                    return ms >= 0 ? ms / 3600000.0 : 0;
                 }
             } catch (Exception e) {
                 // Threat__r not loaded on this instance
@@ -134,7 +134,7 @@ public with sharing class IncidentService {
     public static Decimal calculateMTTR(Incident__c incident) {
         if (incident.Detected_Date__c == null || incident.Resolved_Date__c == null) return null;
         Long ms = incident.Resolved_Date__c.getTime() - incident.Detected_Date__c.getTime();
-        return ms / 3600000; // Return hours (Resolved - Detected = positive duration)
+        return ms / 3600000.0; // Return fractional hours (Decimal division)
     }
 
     // ─── Custom Exception ───────────────────────────────────────────────────────

@@ -99,7 +99,7 @@ export default class IncidentTracker extends LightningElement {
     // ─── Resolve Modal ────────────────────────────────────────────────────────────
 
     handleNotesChange(event) {
-        this.resolutionNotes = event.target.value;
+        this.resolutionNotes = event.detail.value;
     }
 
     handleCloseModal() {

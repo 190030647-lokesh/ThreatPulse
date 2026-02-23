@@ -91,9 +91,15 @@ public with sharing class ThreatFeedParser {
                     List<Indicator_of_Compromise__c> iocList = new List<Indicator_of_Compromise__c>();
                     for (Object iObj : iocObjs) {
                         Map<String, Object> i = (Map<String, Object>) iObj;
+                        String iocType  = (String) i.get('type');
+                        String iocValue = (String) i.get('value');
+                        if (String.isBlank(iocType) || String.isBlank(iocValue)) {
+                            result.errors.add('Skipped IOC with missing type or value');
+                            continue;
+                        }
                         Indicator_of_Compromise__c ioc = new Indicator_of_Compromise__c(
-                            IOC_Type__c   = (String) i.get('type'),
-                            Value__c      = (String) i.get('value'),
+                            IOC_Type__c   = iocType,
+                            Value__c      = iocValue,
                             Is_Active__c  = true,
                             First_Seen__c = System.now(),
                             Last_Seen__c  = System.now()
@@ -159,9 +165,15 @@ public with sharing class ThreatFeedParser {
                         String mappedType       = mapOTXType(rawType);
                         if (mappedType == null) continue;
 
+                        String iocValue = (String) ind.get('indicator');
+                        if (String.isBlank(iocValue)) {
+                            result.errors.add('Skipped OTX indicator with missing value');
+                            continue;
+                        }
+
                         Indicator_of_Compromise__c ioc = new Indicator_of_Compromise__c(
                             IOC_Type__c   = mappedType,
-                            Value__c      = (String) ind.get('indicator'),
+                            Value__c      = iocValue,
                             Is_Active__c  = true,
                             First_Seen__c = System.now(),
                             Last_Seen__c  = System.now()

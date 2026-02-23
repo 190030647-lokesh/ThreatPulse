@@ -76,7 +76,7 @@ export default class IocViewer extends LightningElement {
 
     // ─── Handlers ───────────────────────────────────────────────────────────────
 
-    handleSearchInput(event) { this.searchTerm  = event.target.value;  }
+    handleSearchInput(event) { this.searchTerm  = event.detail.value; }
     handleTypeFilter(event)  { this.typeFilter   = event.detail.value; }
     handleActiveFilter(event){ this.activeFilter = event.detail.value; }
 
@@ -93,7 +93,7 @@ export default class IocViewer extends LightningElement {
         this.isLoading = true;
         this.errorMsg  = undefined;
         try {
-            let results = await searchIOCs({ searchTerm: this.searchTerm });
+            let results = await searchIOCs({ searchTerm: this.searchTerm, activeFilter: this.activeFilter });
 
             // Client-side filter by type
             if (this.typeFilter) {

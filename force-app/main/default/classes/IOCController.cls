@@ -1,10 +1,10 @@
 public with sharing class IOCController {
 
     @AuraEnabled
-    public static List<Indicator_of_Compromise__c> searchIOCs(String searchTerm) {
+    public static List<Indicator_of_Compromise__c> searchIOCs(String searchTerm, String activeFilter) {
         try {
             if (String.isBlank(searchTerm)) {
-                return IOCService.getActiveIOCs();
+                return IOCService.getIOCsFiltered(activeFilter);
             }
             return IOCService.searchByValue(searchTerm);
         } catch (Exception e) {
