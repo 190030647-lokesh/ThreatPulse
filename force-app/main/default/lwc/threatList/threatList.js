@@ -68,7 +68,6 @@ export default class ThreatList extends LightningElement {
     @track categoryFilter  = '';
     @track searchTerm      = '';
     @track currentPage     = 1;
-    rowOffset              = 0;
 
     severityOptions  = SEVERITY_OPTIONS;
     statusOptions    = STATUS_OPTIONS;
@@ -114,6 +113,7 @@ export default class ThreatList extends LightningElement {
         return Math.max(1, Math.ceil(this.filteredThreats.length / PAGE_SIZE));
     }
 
+    get rowOffset()   { return (this.currentPage - 1) * PAGE_SIZE; }
     get hasPrevPage() { return this.currentPage > 1; }
     get hasNextPage() { return this.currentPage < this.totalPages; }
     get noPrevPage()  { return !this.hasPrevPage; }

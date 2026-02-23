@@ -41,6 +41,7 @@ export default class ThreatDashboard extends LightningElement {
     _threatsWired;
     _incidentsWired;
     _pollTimer;
+    _isRefreshing = false;
 
     @wire(getMetrics)
     wiredMetrics(result) {
@@ -135,13 +136,19 @@ export default class ThreatDashboard extends LightningElement {
     }
 
     async _doRefresh(silent) {
+        if (this._isRefreshing) return; // prevent concurrent refreshes
+        this._isRefreshing = true;
         this.isLoading = true;
-        await Promise.all([
-            refreshApex(this._metricsWired),
-            refreshApex(this._threatsWired),
-            refreshApex(this._incidentsWired)
-        ]);
-        this.isLoading = false;
+        try {
+            await Promise.all([
+                refreshApex(this._metricsWired),
+                refreshApex(this._threatsWired),
+                refreshApex(this._incidentsWired)
+            ]);
+        } finally {
+            this.isLoading = false;
+            this._isRefreshing = false;
+        }
         if (!silent) {
             this.dispatchEvent(new ShowToastEvent({
                 title: 'Dashboard', message: 'Data refreshed.', variant: 'success', mode: 'dismissable'

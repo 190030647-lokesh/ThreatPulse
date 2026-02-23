@@ -23,6 +23,7 @@ public with sharing class IncidentService {
             WHERE Status__c NOT IN ('Resolved', 'Closed')
             WITH SECURITY_ENFORCED
             ORDER BY Detected_Date__c DESC
+            LIMIT 2000
         ];
     }
 
