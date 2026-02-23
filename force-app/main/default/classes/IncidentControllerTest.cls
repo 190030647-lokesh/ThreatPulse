@@ -84,12 +84,14 @@ private class IncidentControllerTest {
 
     // ─── closeIncident ────────────────────────────────────────────────────────────
 
+    // Bug 4 fix: both resolveIncident and closeIncident must be inside startTest/stopTest
+    // so Platform Event publishes and governor limits are tracked correctly.
     @IsTest
     static void testCloseIncident() {
         Incident__c inc = [SELECT Id FROM Incident__c LIMIT 1];
-        // Resolve first so validation rules allow closing
-        IncidentController.resolveIncident(inc.Id, 'Resolved before close.');
         Test.startTest();
+        // Resolve first so validation rules allow closing, then close
+        IncidentController.resolveIncident(inc.Id, 'Resolved before close.');
         IncidentController.closeIncident(inc.Id);
         Test.stopTest();
         System.assertEquals('Closed',

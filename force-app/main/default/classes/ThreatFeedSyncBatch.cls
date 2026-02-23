@@ -95,8 +95,14 @@ public with sharing class ThreatFeedSyncBatch
         req.setMethod('GET');
         req.setTimeout(30000);
 
+        // Bug 2 fix: use feed-type-appropriate auth header
         if (String.isNotBlank(feed.API_Key_Reference__c)) {
-            req.setHeader('X-OTX-API-KEY', feed.API_Key_Reference__c);
+            if (feed.Feed_Type__c == 'OTX') {
+                req.setHeader('X-OTX-API-KEY', feed.API_Key_Reference__c);
+            } else {
+                // Custom JSON and other feed types use standard Authorization Bearer
+                req.setHeader('Authorization', 'Bearer ' + feed.API_Key_Reference__c);
+            }
         }
 
         HttpResponse res = new Http().send(req);

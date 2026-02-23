@@ -108,6 +108,7 @@ public with sharing class DashboardMetricsController {
         ];
     }
 
+    // Bug 5 fix: dashboard should show open/in-progress incidents only, not all historical incidents
     @AuraEnabled(cacheable=true)
     public static List<Incident__c> getRecentIncidents(Integer limitCount) {
         Integer lim = (limitCount != null && limitCount > 0) ? limitCount : 10;
@@ -116,6 +117,7 @@ public with sharing class DashboardMetricsController {
                    Threat__r.Name, Assigned_Analyst__r.Name,
                    Detected_Date__c, Resolved_Date__c
             FROM Incident__c
+            WHERE Status__c NOT IN ('Resolved', 'Closed')
             WITH SECURITY_ENFORCED
             ORDER BY Detected_Date__c DESC
             LIMIT :lim

@@ -203,14 +203,17 @@ public with sharing class ThreatFeedParser {
         return 'P3 - Medium';
     }
 
+    // Bug 1 fix: all return values must be valid Category__c picklist entries
     private static String inferOTXCategory(String name, String description) {
         String combined = ((name == null ? '' : name) + ' ' + (description == null ? '' : description)).toLowerCase();
-        if (combined.contains('ransomware'))        return 'Ransomware';
-        if (combined.contains('phish'))             return 'Phishing';
-        if (combined.contains('apt') || combined.contains('nation-state')) return 'APT';
-        if (combined.contains('ddos'))              return 'DDoS';
-        if (combined.contains('c2') || combined.contains('command and control')) return 'C2';
-        if (combined.contains('botnet'))            return 'Botnet';
+        if (combined.contains('ransomware'))                               return 'Ransomware';
+        if (combined.contains('phish'))                                    return 'Phishing';
+        if (combined.contains('ddos'))                                     return 'DDoS';
+        if (combined.contains('zero day') || combined.contains('0day'))    return 'Zero Day';
+        if (combined.contains('supply chain'))                             return 'Supply Chain';
+        if (combined.contains('insider'))                                  return 'Insider Threat';
+        if (combined.contains('social engineering'))                       return 'Social Engineering';
+        // 'APT', 'C2', 'Botnet' are not valid picklist values — map to closest valid option
         return 'Malware';
     }
 

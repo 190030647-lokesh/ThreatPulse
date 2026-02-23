@@ -143,4 +143,11 @@
             </div>
         </template>
     </template>
+
+    <!-- Bug 3 fix: show overlay spinner on Refresh when metrics already loaded -->
+    <template lwc:if={showSpinner}>
+        <div class="slds-spinner_container">
+            <lightning-spinner alternative-text="Refreshing..." size="medium"></lightning-spinner>
+        </div>
+    </template>
 </template>
